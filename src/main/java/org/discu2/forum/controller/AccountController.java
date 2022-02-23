@@ -3,14 +3,10 @@ package org.discu2.forum.controller;
 import lombok.AllArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.discu2.forum.model.Account;
-import org.discu2.forum.repository.AccountRepository;
 import org.discu2.forum.service.AccountService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/account")
@@ -31,7 +27,7 @@ public class AccountController {
     @PostMapping("/register")
     public String registerAccount(@RequestParam("mail") String mail, @RequestParam("name") String name, @RequestParam("pw") String pw, Map<String, Object> map) {
 
-        var account = new Account(UUID.randomUUID(), mail, name, DigestUtils.sha256Hex(pw), false);
+        var account = new Account(mail, name, DigestUtils.sha256Hex(pw), false);
 
         try {
             service.registerNewAccount(account);
