@@ -14,7 +14,6 @@ public class AccountService {
     private final AccountRepository repository;
 
     public void registerNewAccount(Account account) {
-        System.out.println("reg!");
 
         repository.findAccountsByMail(account.getMail())
                 .ifPresentOrElse(a -> {
