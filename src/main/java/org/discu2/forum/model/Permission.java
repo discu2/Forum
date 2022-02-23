@@ -2,6 +2,7 @@ package org.discu2.forum.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 @Data
 public class Permission {
@@ -9,12 +10,10 @@ public class Permission {
     @Id
     private String id;
 
-    private int level;
-    private int color;
+    @Indexed(unique = true)
+    private String permission;
 
-    public Permission(int level, int color) {
-        this.level = level;
-        this.color = color;
+    public Permission(String permission) {
+        this.permission = permission;
     }
-
 }

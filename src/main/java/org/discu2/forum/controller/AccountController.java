@@ -1,9 +1,10 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.discu2.forum.model.Account;
+import org.discu2.forum.repository.RoleRepository;
 import org.discu2.forum.service.AccountService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -14,20 +15,23 @@ import java.util.Map;
 public class AccountController {
 
     private final AccountService service;
-
-    @PostMapping("/login")
-    public String login(@RequestParam("name") String name, @RequestParam("pw") String pw, Map<String,Object> map) {
-
-        if (checkLogin(name, pw)) return "/index";
-
-        map.put("msg", "Wrong password");
-        return "";
-    }
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @PostMapping("/register")
     public String registerAccount(@RequestParam("mail") String mail, @RequestParam("name") String name, @RequestParam("pw") String pw, Map<String, Object> map) {
 
-        var account = new Account(mail, name, DigestUtils.sha256Hex(pw), false);
+        var account = new Account(
+                name,
+                passwordEncoder.encode(pw),
+                roleRepository.findRoleByName("DEFAULT").get().getGrantedAuthorities(),
+                true,
+                true,
+                true,
+                true,
+                mail,
+                false
+        );
 
         try {
             service.registerNewAccount(account);
@@ -38,15 +42,4 @@ public class AccountController {
         }
     }
 
-    public boolean checkLogin(String name, String pw) {
-
-        var accountByMail = service.getAccountsByMail(name);
-        var accountByName = service.getAccountsByName(name);
-        var pwHash = DigestUtils.sha256Hex(pw);
-
-        if ((accountByMail.isPresent() && pwHash.equals(accountByMail.get().getPassWordHash()))
-                || (accountByName.isPresent() && pwHash.equals(accountByName.get().getPassWordHash()))) return true;
-
-        return false;
-    }
 }
