@@ -1,7 +1,9 @@
 package org.discu2.forum.model;
 
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+@Data
 public class Permission {
 
     @Id
