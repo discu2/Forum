@@ -1,6 +1,8 @@
 package org.discu2.forum.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
@@ -17,28 +19,47 @@ public abstract class TextBlock {
     private LocalDateTime postDataTime;
     private LocalDateTime lastEditDataTime;
     private String content;
-    private List<String> comments;
+    private List<String> likeUserIds;
+    private List<String> dislikeUserIds;
 
-    public TextBlock(String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> comments) {
+    public TextBlock(String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
         this.topicId = topicId;
         this.ownerId = ownerId;
         this.postDataTime = postDataTime;
         this.lastEditDataTime = lastEditDataTime;
         this.content = content;
-        this.comments = comments;
+        this.likeUserIds = likeUserIds;
+        this.dislikeUserIds = dislikeUserIds;
     }
 
     public class Post extends TextBlock {
 
-        public Post(String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> comments) {
-            super(topicId, ownerId, postDataTime, lastEditDataTime, content, comments);
+        @Getter
+        @Setter
+        private List<Comment> comments;
+
+        public Post(String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> likeUserIds, List<String> dislikeUserIds, List<Comment> comments) {
+            super(topicId, ownerId, postDataTime, lastEditDataTime, content, likeUserIds, dislikeUserIds);
+            this.comments = comments;
         }
     }
 
     public class Reply extends TextBlock {
 
-        public Reply(String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> comments) {
-            super(topicId, ownerId, postDataTime, lastEditDataTime, content, comments);
+        @Getter
+        @Setter
+        private List<Comment> comments;
+
+        public Reply(String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> likeUserIds, List<String> dislikeUserIds, List<Comment> comments) {
+            super(topicId, ownerId, postDataTime, lastEditDataTime, content, likeUserIds, dislikeUserIds);
+            this.comments = comments;
+        }
+    }
+
+    public class Comment extends TextBlock {
+
+        public Comment(String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
+            super(topicId, ownerId, postDataTime, lastEditDataTime, content, likeUserIds, dislikeUserIds);
         }
     }
 }
