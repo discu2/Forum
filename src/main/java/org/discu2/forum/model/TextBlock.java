@@ -32,7 +32,7 @@ public abstract class TextBlock {
         this.dislikeUserIds = dislikeUserIds;
     }
 
-    public class Post extends TextBlock {
+    public static class Post extends TextBlock {
 
         @Getter
         @Setter
@@ -44,7 +44,7 @@ public abstract class TextBlock {
         }
     }
 
-    public class Reply extends TextBlock {
+    public static class Reply extends TextBlock {
 
         @Getter
         @Setter
@@ -56,7 +56,7 @@ public abstract class TextBlock {
         }
     }
 
-    public class Comment extends TextBlock {
+    public static class Comment extends TextBlock {
 
         public Comment(String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
             super(topicId, ownerId, postDataTime, lastEditDataTime, content, likeUserIds, dislikeUserIds);

@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class Topic {
@@ -13,20 +12,18 @@ public class Topic {
     private String id;
 
     private String boardId;
-    private String postId;
+    private String posterId;
     private String title;
     private boolean pinned;
     private int pinnedOrder;
-    private LocalDateTime createDataTime;
-    private List<String> cachedReplyIds;
+    private LocalDateTime createDateTime;
 
-    public Topic(String boardId, String postId, String title, boolean pinned, int pinnedOrder, LocalDateTime createDataTime, List<String> cachedReplyIds) {
+    public Topic(String boardId, String posterId, String title, boolean pinned, int pinnedOrder, LocalDateTime createDateTime) {
         this.boardId = boardId;
-        this.postId = postId;
+        this.posterId = posterId;
         this.title = title;
         this.pinned = pinned;
         this.pinnedOrder = pinnedOrder;
-        this.createDataTime = createDataTime;
-        this.cachedReplyIds = cachedReplyIds;
+        this.createDateTime = createDateTime;
     }
 }
