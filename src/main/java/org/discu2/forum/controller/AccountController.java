@@ -20,7 +20,7 @@ public class AccountController {
     private final AccountService service;
 
     @PostMapping("/login")
-    public String login(@RequestParam("name") String name, @RequestParam("pw") String pw, Map<String,Object> map) {
+    public String login(@RequestParam("name") String name, @RequestParam("pw") String pw, Map<String, Object> map) {
 
         if (checkLogin(name, pw)) return "/index";
 
@@ -54,3 +54,4 @@ public class AccountController {
         return false;
     }
 }
+
