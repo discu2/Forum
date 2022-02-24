@@ -16,7 +16,7 @@ public class DatabaseSetup {
     @Bean
     public void initRoles() {
         if (roleRepository.findRoleByName("DEFAULT").isEmpty()) {
-            var role = new Role("DEFAULT", Sets.newHashSet());
+            var role = new Role(null, "DEFAULT", Sets.newHashSet());
             roleRepository.insert(role);
         }
     }

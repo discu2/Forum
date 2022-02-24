@@ -6,7 +6,6 @@ import org.discu2.forum.repository.AccountRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,14 +15,13 @@ import java.util.Optional;
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository repository;
-    private final PasswordEncoder passwordEncoder;
 
     public void registerNewAccount(Account account) {
 
         repository.findAccountByMail(account.getMail())
                 .ifPresentOrElse(a -> {
                     throw new IllegalArgumentException();
-                }, () -> repository.insert(account));
+                }, () -> repository.save(account));
 
     }
 

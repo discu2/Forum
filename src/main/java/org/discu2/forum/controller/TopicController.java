@@ -24,6 +24,7 @@ public class TopicController {
     public String postTopic(@RequestBody Map<String, String> map) {
 
         var topic = new Topic(
+                null,
                 map.get("boardId"),
                 null, //don't have a post id now.
                 map.get("title"),
@@ -35,6 +36,7 @@ public class TopicController {
         topicRepository.insert(topic);
 
         var textBlock = new TextBlock.Post(
+                null,
                 topic.getId(),
                 topic.getPosterId(),
                 topic.getCreateDateTime(),
@@ -45,7 +47,7 @@ public class TopicController {
                 Lists.newArrayList()
                 );
 
-        postRepository.insert(textBlock);
+        postRepository.save(textBlock);
 
         return "";
     }

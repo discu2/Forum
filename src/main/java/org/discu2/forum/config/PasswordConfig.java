@@ -1,4 +1,4 @@
-package org.discu2.forum.security;
+package org.discu2.forum.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

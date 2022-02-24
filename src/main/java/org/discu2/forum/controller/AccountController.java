@@ -22,6 +22,7 @@ public class AccountController {
     public String registerAccount(@RequestParam("mail") String mail, @RequestParam("name") String name, @RequestParam("pw") String pw, Map<String, Object> map) {
 
         var account = new Account(
+                null,
                 name,
                 passwordEncoder.encode(pw),
                 roleRepository.findRoleByName("DEFAULT").get().getGrantedAuthorities(),
@@ -35,11 +36,16 @@ public class AccountController {
 
         try {
             service.registerNewAccount(account);
-            return "";
+            return "redirect:/account/login";
         } catch (Exception e) {
             map.put("error", "Account already exist");
-            return "";
+            return "Account already exist";
         }
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "";
     }
 
 }

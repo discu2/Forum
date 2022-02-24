@@ -1,11 +1,15 @@
 package org.discu2.forum.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@Document
 public class Topic {
 
     @Id
@@ -18,12 +22,4 @@ public class Topic {
     private int pinnedOrder;
     private LocalDateTime createDateTime;
 
-    public Topic(String boardId, String posterId, String title, boolean pinned, int pinnedOrder, LocalDateTime createDateTime) {
-        this.boardId = boardId;
-        this.posterId = posterId;
-        this.title = title;
-        this.pinned = pinned;
-        this.pinnedOrder = pinnedOrder;
-        this.createDateTime = createDateTime;
-    }
 }

@@ -1,14 +1,18 @@
 package org.discu2.forum.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@Document
 public class Account implements UserDetails {
 
     @Id
@@ -27,15 +31,4 @@ public class Account implements UserDetails {
     private String mail;
     private boolean mailVerify;
 
-    public Account(String username, String password, Set<? extends GrantedAuthority> authorities, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled, String mail, boolean mailVerify) {
-        this.username = username;
-        this.password = password;
-        this.authorities = authorities;
-        this.isAccountNonExpired = isAccountNonExpired;
-        this.isAccountNonLocked = isAccountNonLocked;
-        this.isCredentialsNonExpired = isCredentialsNonExpired;
-        this.isEnabled = isEnabled;
-        this.mail = mail;
-        this.mailVerify = mailVerify;
-    }
 }
