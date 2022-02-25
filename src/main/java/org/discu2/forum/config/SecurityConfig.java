@@ -2,8 +2,8 @@ package org.discu2.forum.config;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.filter.ForumUsernamePasswordAuthenticationFilter;
+import org.discu2.forum.filter.TokenAuthFilter;
 import org.discu2.forum.service.AccountService;
-import org.discu2.forum.service.LoginTokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated();
 
         http.addFilter(jwtAuthFilter);
+        http.addFilterBefore(new TokenAuthFilter(), ForumUsernamePasswordAuthenticationFilter.class);
 
     }
 
