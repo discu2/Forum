@@ -40,6 +40,7 @@ public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordA
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             var msg = new ErrorMessagePacket(e.getMessage());
             response.setContentType(APPLICATION_JSON_VALUE);
+
             try {
                 mapper.writeValue(response.getOutputStream(), msg);
             } catch (IOException ex) { }
