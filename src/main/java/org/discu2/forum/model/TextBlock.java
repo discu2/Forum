@@ -25,6 +25,7 @@ public abstract class TextBlock {
     private List<String> likeUserIds;
     private List<String> dislikeUserIds;
 
+
     @Document
     public static class Post extends TextBlock {
 

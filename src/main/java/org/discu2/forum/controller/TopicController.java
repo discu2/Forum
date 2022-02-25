@@ -59,24 +59,14 @@ public class TopicController {
     @PostMapping("/reply_topic")
     public String replyTopic(@RequestBody Map<String, String> map) {
 
-        var topic = new Topic(
-                null,
-                map.get("boardId"),
-                null, //don't have a post id now.
-                map.get("title"),
-                false,
-                1,
-                LocalDateTime.now()
-        );
-
-        topicRepository.save(topic);
+        var topic = topicRepository.findById(map.get("id"));
 
         var textBlock = new TextBlock.Reply(
                 null,
-                topic.getId(),
-                topic.getPosterId(),
-                topic.getCreateDateTime(),
-                topic.getCreateDateTime(),
+                topic.get().getId(),
+                topic.get().getPosterId(),
+                topic.get().getCreateDateTime(),
+                topic.get().getCreateDateTime(),
                 map.get("topicContent"),
                 Lists.newArrayList(),
                 Lists.newArrayList(),
