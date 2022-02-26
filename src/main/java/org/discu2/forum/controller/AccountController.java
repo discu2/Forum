@@ -89,4 +89,17 @@ public class AccountController {
 
     }
 
+    @PreAuthorize("(authentication.name == #username) and hasAuthority('account_self')")
+    @PutMapping("/{username}/edit")
+    public void editAccount(@PathVariable("username") String username, HttpServletRequest request, HttpServletResponse response)
+            throws UsernameNotFoundException, IOException, BadPacketFormatException {
+
+        var packet = JsonConverter.requestToPacket(request.getInputStream(), AccountUpdateRequestPacket.class);
+        var account = ((Account.UserDetailImpl)accountService.loadUserByUsername(username)).account;
+
+        account.setNickname(packet.getNickname());
+        accountRepository.save(account);
+
+    }
+
 }
