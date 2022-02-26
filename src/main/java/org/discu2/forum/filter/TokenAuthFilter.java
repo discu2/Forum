@@ -1,10 +1,14 @@
 package org.discu2.forum.filter;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import org.discu2.forum.packet.ErrorMessagePacket;
+import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,8 +26,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class TokenAuthFilter extends OncePerRequestFilter {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getServletPath().startsWith("/account/")) {
@@ -33,7 +35,8 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
         var authorizationHeader = request.getHeader(AUTHORIZATION);
 
-        if (Strings.isNullOrEmpty(authorizationHeader) && !authorizationHeader.startsWith("Bearer ")) {
+        if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
+
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,19 +49,17 @@ public class TokenAuthFilter extends OncePerRequestFilter {
             var username = decodedJWT.getSubject();
             var roles = decodedJWT.getClaim("roles").asList(String.class);
             var authorities = new ArrayList<SimpleGrantedAuthority>();
-            roles.stream().forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+            roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
             var authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            var msg = new ErrorMessagePacket(e.getMessage());
             response.setContentType(APPLICATION_JSON_VALUE);
-            mapper.writeValue(response.getOutputStream(), msg);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            JsonConverter.PacketToJsonResponse(response.getOutputStream(), new ErrorMessagePacket(HttpStatus.FORBIDDEN, e.getMessage()));
         }
-
 
     }
 

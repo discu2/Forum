@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.discu2.forum.model.Account;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -15,7 +16,7 @@ public class TokenFactory {
     private static final int REFRESH_TOKEN_EXPIRES_TIME_MILLIS = 2*7*24*60*60*1000;
     public static final Algorithm ALGORITHM = Algorithm.HMAC512("this is not good".getBytes());
 
-    public static String createAccessToken(Account account, HttpServletRequest request) {
+    public static String createAccessToken(UserDetails account, HttpServletRequest request) {
 
         return JWT.create()
                 .withSubject(account.getUsername())
@@ -26,7 +27,7 @@ public class TokenFactory {
 
     }
 
-    public static String createRefreshToken(Account account, HttpServletRequest request) {
+    public static String createRefreshToken(UserDetails account, HttpServletRequest request) {
 
         return JWT.create()
                 .withSubject(account.getUsername())
