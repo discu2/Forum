@@ -1,6 +1,7 @@
 package org.discu2.forum.service;
 
 import lombok.AllArgsConstructor;
+import org.discu2.forum.exception.AccountAlreadyExistException;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.repository.AccountRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,12 +17,13 @@ public class AccountService implements UserDetailsService {
 
     private final AccountRepository repository;
 
-    public void registerNewAccount(Account account) {
+    public void registerNewAccount(Account account) throws AccountAlreadyExistException {
 
-        repository.findAccountByMail(account.getMail())
-                .ifPresentOrElse(a -> {
-                    throw new IllegalArgumentException();
-                }, () -> repository.save(account));
+        try {
+            repository.save(account);
+        } catch (Exception e) {
+            throw new AccountAlreadyExistException();
+        }
 
     }
 
@@ -36,11 +38,11 @@ public class AccountService implements UserDetailsService {
         throw new UsernameNotFoundException(String.format("Username %s not found", username));
     }
 
-    public Optional<Account> getAccountByMail(String mail) {
+    private Optional<Account> getAccountByMail(String mail) {
         return repository.findAccountByMail(mail);
     }
 
-    public Optional<Account> getAccountByName(String name) {
+    private Optional<Account> getAccountByName(String name) {
         return repository.findAccountByUsername(name);
     }
 

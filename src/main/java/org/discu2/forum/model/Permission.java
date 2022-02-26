@@ -15,6 +15,6 @@ public class Permission {
     private String id;
 
     @Indexed(unique = true)
-    private String permission;
+    private String name;
 
 }

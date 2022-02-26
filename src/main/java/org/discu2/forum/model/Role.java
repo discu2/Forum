@@ -24,10 +24,10 @@ public class Role {
 
 
     public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
-        Set<SimpleGrantedAuthority> permissions = getPermissions().stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
+        var permissions = getPermissions().stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
                 .collect(Collectors.toSet());
-        permissions.add(new SimpleGrantedAuthority("ROLE_" + name));
+        permissions.add(new SimpleGrantedAuthority(name));
         return permissions;
     }
 }

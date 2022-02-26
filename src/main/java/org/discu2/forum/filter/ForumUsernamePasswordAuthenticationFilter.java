@@ -1,12 +1,13 @@
 package org.discu2.forum.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.packet.ErrorMessagePacket;
 import org.discu2.forum.packet.LoginRequestPacket;
 import org.discu2.forum.packet.TokenPacket;
+import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,7 +26,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -33,15 +33,16 @@ public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordA
         var authToken = new UsernamePasswordAuthenticationToken("", "");
 
         try {
-            var account = mapper.readValue(request.getInputStream(), LoginRequestPacket.class);
+            var account = JsonConverter.requestToPacket(request.getInputStream(), LoginRequestPacket.class);
             authToken = new UsernamePasswordAuthenticationToken(account.getUsername(), account.getPassword());
         } catch (Exception e) {
 
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            var msg = new ErrorMessagePacket(e.getMessage());
+            var msg = new ErrorMessagePacket(HttpStatus.BAD_REQUEST, e.getMessage());
             response.setContentType(APPLICATION_JSON_VALUE);
+
             try {
-                mapper.writeValue(response.getOutputStream(), msg);
+                JsonConverter.PacketToJsonResponse(response.getOutputStream(), msg);
             } catch (IOException ex) { }
         }
 
@@ -58,6 +59,6 @@ public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordA
         var packet = new TokenPacket(accessToken, refreshToken);
 
         response.setContentType(APPLICATION_JSON_VALUE);
-        mapper.writeValue(response.getOutputStream(), packet);
+        JsonConverter.PacketToJsonResponse(response.getOutputStream(), packet);
     }
 }
