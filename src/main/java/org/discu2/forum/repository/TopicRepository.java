@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface TopicRepository extends MongoRepository<Topic, String> {
 
+    Optional<Topic> findById(String id);
+
 }
