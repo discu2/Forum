@@ -3,31 +3,30 @@ package org.discu2.forum.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
 @Document
 public class Role {
 
+    private static final String[] PERMISSIONS = new String[] { "access", "post", "reply", "comment", "edit_post", "edit_reply", "edit_comment", "moderate" };
+
     @Id
     private String id;
 
-    @Indexed(unique = true)
     private String name;
-    private Set<Permission> permissions;
-
 
     public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
-        var permissions = getPermissions().stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
-                .collect(Collectors.toSet());
-        permissions.add(new SimpleGrantedAuthority(name));
-        return permissions;
+
+        var authorities = new HashSet<SimpleGrantedAuthority>();
+        for (var p : PERMISSIONS) authorities.add(new SimpleGrantedAuthority(p + "_" + name));
+
+        if (name.equals("DEFAULT")) authorities.add(new SimpleGrantedAuthority("account_self"));
+
+        return authorities;
     }
 }

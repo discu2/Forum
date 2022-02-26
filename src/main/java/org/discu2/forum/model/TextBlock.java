@@ -19,8 +19,8 @@ public abstract class TextBlock {
 
     private String topicId;
     private String ownerId;
-    private LocalDateTime postDataTime;
-    private LocalDateTime lastEditDataTime;
+    private LocalDateTime postDateTime;
+    private LocalDateTime lastEditDateTime;
     private String content;
     private List<String> likeUserIds;
     private List<String> dislikeUserIds;
@@ -33,8 +33,8 @@ public abstract class TextBlock {
         @Setter
         private List<Comment> comments;
 
-        public Post(String id, String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> likeUserIds, List<String> dislikeUserIds, List<Comment> comments) {
-            super(id, topicId, ownerId, postDataTime, lastEditDataTime, content, likeUserIds, dislikeUserIds);
+        public Post(String id, String topicId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds, List<Comment> comments) {
+            super(id, topicId, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
             this.comments = comments;
         }
     }
@@ -46,8 +46,8 @@ public abstract class TextBlock {
         @Setter
         private List<Comment> comments;
 
-        public Reply(String id, String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> likeUserIds, List<String> dislikeUserIds, List<Comment> comments) {
-            super(id, topicId, ownerId, postDataTime, lastEditDataTime, content, likeUserIds, dislikeUserIds);
+        public Reply(String id, String topicId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds, List<Comment> comments) {
+            super(id, topicId, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
             this.comments = comments;
         }
     }
@@ -55,8 +55,8 @@ public abstract class TextBlock {
     @Document
     public static class Comment extends TextBlock {
 
-        public Comment(String id, String topicId, String ownerId, LocalDateTime postDataTime, LocalDateTime lastEditDataTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
-            super(id, topicId, ownerId, postDataTime, lastEditDataTime, content, likeUserIds, dislikeUserIds);
+        public Comment(String id, String topicId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
+            super(id, topicId, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
         }
     }
 }

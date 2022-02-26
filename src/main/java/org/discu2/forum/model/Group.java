@@ -18,6 +18,6 @@ public class Group {
 
     @Indexed(unique = true)
     private String name;
-    private List<Permission> permissions;
+    private List<Role> permissions;
 
 }

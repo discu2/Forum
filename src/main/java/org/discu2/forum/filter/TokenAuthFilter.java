@@ -5,6 +5,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import org.discu2.forum.model.Account;
 import org.discu2.forum.packet.ErrorMessagePacket;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
@@ -28,7 +29,7 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().startsWith("/account/")) {
+        if (request.getServletPath().startsWith("/account/refresh_token")) {
             filterChain.doFilter(request, response);
             return;
         }

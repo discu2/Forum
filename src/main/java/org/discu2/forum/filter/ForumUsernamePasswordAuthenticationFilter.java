@@ -9,6 +9,7 @@ import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -30,11 +31,18 @@ public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordA
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
+        if (!request.getMethod().equals("POST")) {
+            throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
+        }
+
         var authToken = new UsernamePasswordAuthenticationToken("", "");
 
         try {
             var account = JsonConverter.requestToPacket(request.getInputStream(), LoginRequestPacket.class);
             authToken = new UsernamePasswordAuthenticationToken(account.getUsername(), account.getPassword());
+
+            super.setDetails(request, authToken);
+
         } catch (Exception e) {
 
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -52,7 +60,7 @@ public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordA
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
-        var account = (Account)authResult.getPrincipal();
+        var account = (Account.UserDetailImpl)authResult.getPrincipal();
         var accessToken = TokenFactory.createAccessToken(account, request);
         var refreshToken = TokenFactory.createRefreshToken(account, request);
 
