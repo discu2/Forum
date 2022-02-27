@@ -40,7 +40,7 @@ public class AccountController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", produces = "application/json")
     public void registerAccount(HttpServletRequest request) throws IOException, AccountAlreadyExistException, BadPacketFormatException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), RegisterRequestPacket.class);
@@ -90,7 +90,7 @@ public class AccountController {
     }
 
     @PreAuthorize("(authentication.name == #username) and hasAuthority('account_self')")
-    @PutMapping("/{username}/edit")
+    @PutMapping(value = "/{username}/edit", produces = "application/json")
     public void editAccount(@PathVariable("username") String username, HttpServletRequest request, HttpServletResponse response)
             throws UsernameNotFoundException, IOException, BadPacketFormatException {
 

@@ -48,6 +48,7 @@ public class Account{
 
         private static RoleRepository roleRepository = SpringContext.getBean(RoleRepository.class);
         private static AccountRepository accountRepository = SpringContext.getBean(AccountRepository.class);
+
         public final Account account;
 
         public UserDetailImpl(Account account) {
@@ -63,7 +64,7 @@ public class Account{
             for (var id : account.getRoleIds()){
                 var role = roleRepository.findById(id);
 
-                role.ifPresentOrElse(r -> authorities.addAll(r.getGrantedAuthorities()), () -> {
+                role.ifPresentOrElse(r -> authorities.add(r.getGrantedAuthorities()), () -> {
                     account.getRoleIds().remove(id);
                     dirty.set(true);
                 });
