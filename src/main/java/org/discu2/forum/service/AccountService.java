@@ -15,12 +15,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AccountService implements UserDetailsService {
 
-    private final AccountRepository repository;
+    private final AccountRepository accountRepository;
 
     public void registerNewAccount(Account account) throws AccountAlreadyExistException {
 
         try {
-            repository.save(account);
+            accountRepository.save(account);
         } catch (Exception e) {
             throw new AccountAlreadyExistException();
         }
@@ -32,18 +32,18 @@ public class AccountService implements UserDetailsService {
         var accountByMail = getAccountByMail(username);
         var accountByName = getAccountByName(username);
 
-        if (accountByMail.isPresent()) return accountByMail.get();
-        if (accountByName.isPresent()) return accountByName.get();
+        if (accountByMail.isPresent()) return accountByMail.get().getUserDetails();
+        if (accountByName.isPresent()) return accountByName.get().getUserDetails();
 
         throw new UsernameNotFoundException(String.format("Username %s not found", username));
     }
 
     private Optional<Account> getAccountByMail(String mail) {
-        return repository.findAccountByMail(mail);
+        return accountRepository.findAccountByMail(mail);
     }
 
     private Optional<Account> getAccountByName(String name) {
-        return repository.findAccountByUsername(name);
+        return accountRepository.findAccountByUsername(name);
     }
 
 }

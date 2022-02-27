@@ -3,12 +3,9 @@ package org.discu2.forum.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -18,16 +15,9 @@ public class Role {
     @Id
     private String id;
 
-    @Indexed(unique = true)
     private String name;
-    private Set<Permission> permissions;
 
-
-    public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
-        var permissions = getPermissions().stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
-                .collect(Collectors.toSet());
-        permissions.add(new SimpleGrantedAuthority(name));
-        return permissions;
+    public SimpleGrantedAuthority getGrantedAuthorities() {
+        return new SimpleGrantedAuthority(name);
     }
 }

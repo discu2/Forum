@@ -16,18 +16,19 @@ public class TokenFactory {
     private static final int REFRESH_TOKEN_EXPIRES_TIME_MILLIS = 2*7*24*60*60*1000;
     public static final Algorithm ALGORITHM = Algorithm.HMAC512("this is not good".getBytes());
 
-    public static String createAccessToken(UserDetails account, HttpServletRequest request) {
+    public static String createAccessToken(Account.UserDetailImpl account, HttpServletRequest request) {
 
         return JWT.create()
                 .withSubject(account.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRES_TIME_MILLIS))
                 .withIssuer(request.getRequestURL().toString())
+                .withClaim("id", account.getId())
                 .withClaim("roles", account.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(ALGORITHM);
 
     }
 
-    public static String createRefreshToken(UserDetails account, HttpServletRequest request) {
+    public static String createRefreshToken(Account.UserDetailImpl account, HttpServletRequest request) {
 
         return JWT.create()
                 .withSubject(account.getUsername())
