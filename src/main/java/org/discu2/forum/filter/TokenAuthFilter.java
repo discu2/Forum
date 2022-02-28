@@ -54,7 +54,7 @@ public class TokenAuthFilter extends OncePerRequestFilter {
             var roles = decodedJWT.getClaim("roles").asList(String.class);
             var ip = decodedJWT.getClaim("ip").asString();
 
-            if (!request.getHeader("X-FORWARDED-FOR").equals(ip))
+            if (!request.getRemoteAddr().equals(ip))
                 throw new RuntimeException("Client ip does not match with token.");
 
             var authorities = new ArrayList<SimpleGrantedAuthority>();

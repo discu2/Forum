@@ -18,7 +18,7 @@ public class TokenFactory {
 
     public static String createAccessToken(Account.UserDetailImpl account, HttpServletRequest request) {
 
-        var ip = request.getHeader("X-FORWARDED-FOR");
+        var ip = request.getRemoteAddr();
 
         return JWT.create()
                 .withSubject(account.getUsername())
