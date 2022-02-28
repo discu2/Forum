@@ -18,12 +18,15 @@ public class TokenFactory {
 
     public static String createAccessToken(Account.UserDetailImpl account, HttpServletRequest request) {
 
+        var ip = request.getHeader("X-FORWARDED-FOR");
+
         return JWT.create()
                 .withSubject(account.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRES_TIME_MILLIS))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("id", account.getId())
                 .withClaim("roles", account.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .withClaim("ip", ip)
                 .sign(ALGORITHM);
 
     }
