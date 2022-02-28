@@ -9,4 +9,6 @@ public interface PostRepository extends MongoRepository<TextBlock.Post, String> 
 
     Optional<TextBlock.Post> findById(String id);
 
+    Optional<TextBlock.Post> findByTopicId(String masterId);
+
 }

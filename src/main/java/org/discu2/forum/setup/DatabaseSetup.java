@@ -2,12 +2,15 @@ package org.discu2.forum.setup;
 
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
+import org.discu2.forum.exception.AlreadyExistException;
+import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.model.Board;
 import org.discu2.forum.model.Role;
-import org.discu2.forum.repository.AccountRepository;
 import org.discu2.forum.repository.BoardRepository;
-import org.discu2.forum.repository.RoleRepository;
+import org.discu2.forum.service.AccountService;
+import org.discu2.forum.service.BoardService;
+import org.discu2.forum.service.RoleService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -16,36 +19,36 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class DatabaseSetup {
 
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
+    private final BoardService boardService;
     private final BoardRepository boardRepository;
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
-    public void initDefaults() {
+    public void initDefaults() throws AlreadyExistException, DataNotFoundException {
 
-        if (roleRepository.findByName("DEFAULT").isEmpty())
-            roleRepository.save(new Role(null, "DEFAULT"));
+        Role adminRole;
 
-        if (roleRepository.findByName("ADMIN").isEmpty())
-            roleRepository.save(new Role(null, "ADMIN"));
+        try {
+            roleService.loadRoleByName("DEFAULT");
+        } catch (Exception e) {
+            roleService.createNewRole("DEFAULT");
+        }
 
-        if (accountRepository.findAccountByUsername("admin").isEmpty())
-            accountRepository.save(new Account(
-                    null,
-                    "admin",
-                    passwordEncoder.encode("admin"),
-                    Sets.newHashSet(roleRepository.findByName("ADMIN").get().getId()),
-                    true,
-                    true,
-                    true,
-                    true,
-                    "admin@mail.com",
-                    false,
-                    "admin"
-            ));
+        try {
+            adminRole = roleService.loadRoleByName("ADMIN");
+        } catch (Exception e) {
+            adminRole = roleService.createNewRole("ADMIN");
+        }
+
+        try {
+            accountService.loadUserByUsername("admin");
+        } catch (Exception e) {
+            accountService.registerNewAccount("admin", "admin", adminRole.getId(), "admin@mail.com", null);
+        }
 
         if (boardRepository.findAll().isEmpty())
-            boardRepository.save(Board.createNewBoard("default", "Default"));
+            boardService.createNewBoard("Default", "Default Group", "DEFAULT");
     }
 }
