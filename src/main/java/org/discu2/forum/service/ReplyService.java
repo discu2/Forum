@@ -15,9 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 public class ReplyService {
 
-    private ReplyRepository replyRepository;
-    private TopicService topicService;
-    private PostService postService;
+    private final ReplyRepository replyRepository;
+    private final TopicService topicService;
+    private final PostService postService;
 
     public TextBlock.Reply createNewReply(@NonNull String topicId, @NonNull String accountId, @NonNull String content) throws DataNotFoundException {
 

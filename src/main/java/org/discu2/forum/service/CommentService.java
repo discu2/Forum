@@ -15,9 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentService {
 
-    private CommentRepository commentRepository;
-    private PostService postService;
-    private ReplyService replyService;
+    private final CommentRepository commentRepository;
+    private final PostService postService;
+    private final ReplyService replyService;
 
     public TextBlock.Comment createNewComment(@NonNull TextBlock.Comment.MasterType masterType, @NonNull String masterId, @NonNull String accountId, @NonNull String content) throws DataNotFoundException {
 
