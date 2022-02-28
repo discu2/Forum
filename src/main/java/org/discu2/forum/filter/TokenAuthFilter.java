@@ -29,7 +29,10 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().startsWith("/account/refresh_token")) {
+        if (request.getServletPath().startsWith("/account/refresh_token")
+                || request.getServletPath().startsWith("/account/login")
+                || request.getServletPath().startsWith("/account/register")) {
+
             filterChain.doFilter(request, response);
             return;
         }
@@ -49,6 +52,11 @@ public class TokenAuthFilter extends OncePerRequestFilter {
             var decodedJWT = verifier.verify(token);
             var username = decodedJWT.getSubject();
             var roles = decodedJWT.getClaim("roles").asList(String.class);
+            var ip = decodedJWT.getClaim("ip").asString();
+
+            if (!request.getHeader("X-FORWARDED-FOR").equals(ip))
+                throw new RuntimeException("Client ip does not match with token.");
+
             var authorities = new ArrayList<SimpleGrantedAuthority>();
             roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
             var authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
