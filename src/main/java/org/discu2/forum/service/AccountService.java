@@ -1,6 +1,7 @@
 package org.discu2.forum.service;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -15,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static org.discu2.forum.model.Account.MAX_REFRESH_TOKENS;
 
 @Service
 @AllArgsConstructor
@@ -48,6 +51,7 @@ public class AccountService implements UserDetailsService {
                 true,
                 mail,
                 false,
+                Lists.newArrayList(),
                 Strings.isNullOrEmpty(nickname) ? username : nickname
         );
 
@@ -68,6 +72,25 @@ public class AccountService implements UserDetailsService {
         if (accountByName.isPresent()) return accountByName.get().getUserDetails();
 
         throw new UsernameNotFoundException(String.format("Username %s not found", username));
+    }
+
+    public Boolean isRefreshTokenUUIDValid(@NonNull UserDetails account, String uuid) {
+
+        if (Strings.isNullOrEmpty(uuid)) return false;
+
+        if (!((Account.UserDetailImpl) account).getRefreshTokens().contains(uuid)) return false;
+
+        return true;
+    }
+
+    public void addNewRefreshTokenUUID(@NonNull Account account, @NonNull String uuid) {
+
+        var uuids = account.getRefreshTokenUUIDs();
+
+        if (uuids.size() >= MAX_REFRESH_TOKENS) uuids.remove(0);
+        uuids.add(uuid);
+
+        accountRepository.save(account);
     }
 
     private Optional<Account> getAccountByMail(@NonNull String mail) {

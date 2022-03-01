@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,6 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @AllArgsConstructor
 @Document
 public class Account{
+
+    public static final int MAX_REFRESH_TOKENS = 6;
 
     @Id
     private String id;
@@ -37,6 +40,8 @@ public class Account{
     @Indexed(unique = true)
     private String mail;
     private boolean mailVerify;
+
+    private List<String> refreshTokenUUIDs;
 
     private String nickname;
 
@@ -78,6 +83,10 @@ public class Account{
 
         public String getId() {
             return account.getId();
+        }
+
+        public List<String> getRefreshTokens() {
+            return account.getRefreshTokenUUIDs();
         }
 
         @Override
