@@ -18,7 +18,11 @@ public class TopicService {
     private final AccountService accountService;
     private final BoardService boardService;
 
-    public Topic addNewTopic(@NonNull String boardGroupName, @NonNull String boardName, @NonNull String accountName, @NonNull String title) throws DataNotFoundException {
+    public Topic addNewTopic(@NonNull String boardGroupName,
+                             @NonNull String boardName,
+                             @NonNull String accountName,
+                             @NonNull String title) throws DataNotFoundException {
+
         return addNewTopic(boardService.loadBoardByGroupNameAndName(boardGroupName, boardName).getId(),
                 ((Account)accountService.loadUserByUsername(accountName)).getId(), title);
     }
