@@ -5,9 +5,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -17,10 +17,11 @@ public abstract class TextBlock {
     @Id
     private String id;
 
-    private String topicId;
     private String ownerId;
-    private LocalDateTime postDateTime;
-    private LocalDateTime lastEditDateTime;
+    private String username;
+
+    private Long postTime;
+    private Long lastEditTime;
     private String content;
     private List<String> likeUserIds;
     private List<String> dislikeUserIds;
@@ -31,32 +32,30 @@ public abstract class TextBlock {
 
         @Getter
         @Setter
-        private List<Comment> comments;
-
-        public Post(String id, String topicId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds, List<Comment> comments) {
-            super(id, topicId, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
-            this.comments = comments;
-        }
-    }
-
-    @Document
-    public static class Reply extends TextBlock {
+        @Indexed(unique = true)
+        private String topicId;
 
         @Getter
         @Setter
-        private List<Comment> comments;
+        private Boolean originPost;
 
-        public Reply(String id, String topicId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds, List<Comment> comments) {
-            super(id, topicId, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
-            this.comments = comments;
+        public Post(String id, String topicId, String ownerId, String username, Long postTime, Long lastEditTime, String content, Boolean originPost, List<String> likeUserIds, List<String> dislikeUserIds) {
+            super(id, ownerId, username, postTime, lastEditTime, content, likeUserIds, dislikeUserIds);
+            this.originPost = originPost;
+            this.topicId = topicId;
         }
     }
 
     @Document
     public static class Comment extends TextBlock {
 
-        public Comment(String id, String topicId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
-            super(id, topicId, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
+        @Getter
+        @Setter
+        private String masterId;
+
+        public Comment(String id, String masterId, String ownerId, String username, Long postTime, Long lastEditTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
+            super(id, ownerId, username, postTime, lastEditTime, content, likeUserIds, dislikeUserIds);
+            this.masterId = masterId;
         }
     }
 }

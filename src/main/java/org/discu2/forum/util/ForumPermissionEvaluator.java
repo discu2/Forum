@@ -1,25 +1,18 @@
 package org.discu2.forum.util;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.discu2.forum.repository.BoardRepository;
-import org.discu2.forum.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-@NoArgsConstructor
 @Component
+@AllArgsConstructor
 public class ForumPermissionEvaluator implements PermissionEvaluator {
 
-    @Autowired
-    RoleRepository permissionRepository;
-
-    @Autowired
-    BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
 
     /**
      *

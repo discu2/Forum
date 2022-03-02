@@ -15,8 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ForumExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(AccountAlreadyExistException.class)
-    public ResponseEntity<?> handleAccountAlreadyExist(AccountAlreadyExistException e, WebRequest request) {
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<?> handleAccountAlreadyExist(AlreadyExistException e, WebRequest request) {
         var packet = new ErrorMessagePacket(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return new ResponseEntity<>(packet, new HttpHeaders(), packet.getStatus());
