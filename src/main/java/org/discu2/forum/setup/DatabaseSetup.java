@@ -1,11 +1,8 @@
 package org.discu2.forum.setup;
 
-import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import org.discu2.forum.exception.AlreadyExistException;
 import org.discu2.forum.exception.DataNotFoundException;
-import org.discu2.forum.model.Account;
-import org.discu2.forum.model.Board;
 import org.discu2.forum.model.Role;
 import org.discu2.forum.repository.BoardRepository;
 import org.discu2.forum.service.AccountService;
@@ -23,7 +20,6 @@ public class DatabaseSetup {
     private final BoardService boardService;
     private final BoardRepository boardRepository;
     private final AccountService accountService;
-    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public void initDefaults() throws AlreadyExistException, DataNotFoundException {

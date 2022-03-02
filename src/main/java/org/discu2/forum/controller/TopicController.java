@@ -1,11 +1,9 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.service.TopicService;
 import org.discu2.forum.util.JsonConverter;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

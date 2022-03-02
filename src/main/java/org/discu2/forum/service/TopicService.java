@@ -6,14 +6,12 @@ import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.model.Topic;
 import org.discu2.forum.repository.TopicRepository;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 

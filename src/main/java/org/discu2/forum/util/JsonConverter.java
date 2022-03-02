@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 

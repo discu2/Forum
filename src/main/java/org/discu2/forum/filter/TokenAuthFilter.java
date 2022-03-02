@@ -1,11 +1,7 @@
 package org.discu2.forum.filter;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import org.discu2.forum.model.Account;
 import org.discu2.forum.packet.ErrorMessagePacket;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;

@@ -11,7 +11,6 @@ import org.discu2.forum.packet.TokenPacket;
 import org.discu2.forum.service.AccountService;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController

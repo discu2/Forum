@@ -2,7 +2,6 @@ package org.discu2.forum.config;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.util.ForumPermissionEvaluator;
-import org.discu2.forum.util.SpringContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
