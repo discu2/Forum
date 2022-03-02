@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @Data
 @NoArgsConstructor
-public abstract class TextBlockRequestPacket {
+public class TextBlockRequestPacket {
 
-    String content;
+    private String content;
 
     @NoArgsConstructor
     public static class Post extends TextBlockRequestPacket {
@@ -17,14 +17,6 @@ public abstract class TextBlockRequestPacket {
         @Getter
         @Setter
         String title;
-
-    }
-
-    public static class Reply extends TextBlockRequestPacket {
-
-    }
-
-    public static class Comment extends TextBlockRequestPacket {
 
     }
 
