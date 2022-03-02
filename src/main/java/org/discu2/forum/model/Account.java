@@ -21,9 +21,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Data
 @AllArgsConstructor
 @Document
-public class Account{
+public class Account implements UserDetails{
 
     public static final int MAX_REFRESH_TOKENS = 6;
+    private static final RoleRepository roleRepository = SpringContext.getBean(RoleRepository.class);
+    private static final AccountRepository accountRepository = SpringContext.getBean(AccountRepository.class);
 
     @Id
     private String id;
@@ -45,78 +47,101 @@ public class Account{
 
     private String nickname;
 
-    public UserDetails getUserDetails() {
-        return new UserDetailImpl(this);
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        var authorities = new HashSet<SimpleGrantedAuthority>();
+        AtomicBoolean dirty = new AtomicBoolean(false);
+
+        for (var id : roleIds){
+            var role = roleRepository.findById(id);
+
+            role.ifPresentOrElse(r -> authorities.add(r.getGrantedAuthorities()), () -> {
+                roleIds.remove(id);
+                dirty.set(true);
+            });
+        }
+
+        if (dirty.get()) accountRepository.save(this);
+
+        return authorities;
+
     }
 
-    public static class UserDetailImpl implements UserDetails {
-
-        private static RoleRepository roleRepository = SpringContext.getBean(RoleRepository.class);
-        private static AccountRepository accountRepository = SpringContext.getBean(AccountRepository.class);
-
-        public final Account account;
-
-        public UserDetailImpl(Account account) {
-            this.account = account;
-        }
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-
-            var authorities = new HashSet<SimpleGrantedAuthority>();
-            AtomicBoolean dirty = new AtomicBoolean(false);
-
-            for (var id : account.getRoleIds()){
-                var role = roleRepository.findById(id);
-
-                role.ifPresentOrElse(r -> authorities.add(r.getGrantedAuthorities()), () -> {
-                    account.getRoleIds().remove(id);
-                    dirty.set(true);
-                });
-            }
-
-            if (dirty.get()) accountRepository.save(account);
-
-            return authorities;
-
-        }
-
-        public String getId() {
-            return account.getId();
-        }
-
-        public List<String> getRefreshTokens() {
-            return account.getRefreshTokenUUIDs();
-        }
-
-        @Override
-        public String getPassword() {
-            return account.getPassword();
-        }
-
-        @Override
-        public String getUsername() {
-            return account.getUsername();
-        }
-
-        @Override
-        public boolean isAccountNonExpired() {
-            return account.isAccountNonExpired();
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-            return account.isAccountNonLocked();
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-            return account.isCredentialsNonExpired();
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return account.isEnabled();
-        }
-    }
+//    public UserDetails getUserDetails() {
+//        return new UserDetailImpl(this);
+//    }
+//
+//
+//    public static class UserDetailImpl implements UserDetails {
+//
+//        private static RoleRepository roleRepository = SpringContext.getBean(RoleRepository.class);
+//        private static AccountRepository accountRepository = SpringContext.getBean(AccountRepository.class);
+//
+//        public final Account account;
+//
+//        public UserDetailImpl(Account account) {
+//            this.account = account;
+//        }
+//
+//        @Override
+//        public Collection<? extends GrantedAuthority> getAuthorities() {
+//
+//            var authorities = new HashSet<SimpleGrantedAuthority>();
+//            AtomicBoolean dirty = new AtomicBoolean(false);
+//
+//            for (var id : account.getRoleIds()){
+//                var role = roleRepository.findById(id);
+//
+//                role.ifPresentOrElse(r -> authorities.add(r.getGrantedAuthorities()), () -> {
+//                    account.getRoleIds().remove(id);
+//                    dirty.set(true);
+//                });
+//            }
+//
+//            if (dirty.get()) accountRepository.save(account);
+//
+//            return authorities;
+//
+//        }
+//
+//        public String getId() {
+//            return account.getId();
+//        }
+//
+//        public List<String> getRefreshTokens() {
+//            return account.getRefreshTokenUUIDs();
+//        }
+//
+//        @Override
+//        public String getPassword() {
+//            return account.getPassword();
+//        }
+//
+//        @Override
+//        public String getUsername() {
+//            return account.getUsername();
+//        }
+//
+//        @Override
+//        public boolean isAccountNonExpired() {
+//            return account.isAccountNonExpired();
+//        }
+//
+//        @Override
+//        public boolean isAccountNonLocked() {
+//            return account.isAccountNonLocked();
+//        }
+//
+//        @Override
+//        public boolean isCredentialsNonExpired() {
+//            return account.isCredentialsNonExpired();
+//        }
+//
+//        @Override
+//        public boolean isEnabled() {
+//            return account.isEnabled();
+//        }
+//    }
 }

@@ -7,9 +7,11 @@ import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.model.TextBlock;
 import org.discu2.forum.repository.PostRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 @AllArgsConstructor
@@ -19,22 +21,25 @@ public class PostService {
     private final TopicService topicService;
     private final AccountService accountService;
 
-    public TextBlock.Post createNewPost(@NonNull String boardGroupName,
-                                        @NonNull String boardName,
+    public TextBlock.Post createNewPost(@NonNull String boardId,
                                         @NonNull String username,
                                         @NonNull String title,
-                                        @NonNull String content) throws DataNotFoundException {
+                                        @NonNull String content,
+                                        Boolean isOriginPost) throws UsernameNotFoundException {
 
-        var topic = topicService.addNewTopic(boardGroupName, boardName, username, title);
-        var accountId = ((Account.UserDetailImpl) accountService.loadUserByUsername(username)).getId();
+        var topic = topicService.addNewTopic(boardId, username, title);
+        var accountId = ((Account) accountService.loadUserByUsername(username)).getId();
+        var now = new Date().getTime();
 
         var post = new TextBlock.Post(
                 null,
                 topic.getId(),
                 accountId,
-                topic.getCreateDateTime(),
-                topic.getCreateDateTime(),
+                username,
+                now,
+                now,
                 content,
+                isOriginPost,
                 Lists.newArrayList(),
                 Lists.newArrayList());
 
@@ -45,7 +50,7 @@ public class PostService {
         var post = loadPostByTopicId(topicId);
 
         post.setContent(content);
-        post.setLastEditDateTime(LocalDateTime.now());
+        post.setLastEditTime(new Date().getTime());
 
         return postRepository.save(post);
     }

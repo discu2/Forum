@@ -1,5 +1,6 @@
 package org.discu2.forum.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -18,9 +19,11 @@ public abstract class TextBlock {
     @Id
     private String id;
 
-    private String accountId;
-    private LocalDateTime postDateTime;
-    private LocalDateTime lastEditDateTime;
+    private String ownerId;
+    private String username;
+
+    private Long postTime;
+    private Long lastEditTime;
     private String content;
     private List<String> likeUserIds;
     private List<String> dislikeUserIds;
@@ -34,20 +37,13 @@ public abstract class TextBlock {
         @Indexed(unique = true)
         private String topicId;
 
-        public Post(String id, String topicId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
-            super(id, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
-            this.topicId = topicId;
-        }
-    }
-
-    @Document
-    public static class Reply extends TextBlock {
-
         @Getter
         @Setter
-        private String topicId;
-        public Reply(String id, String topicId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
-            super(id, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
+        private Boolean originPost;
+
+        public Post(String id, String topicId, String ownerId, String username, Long postTime, Long lastEditTime, String content, Boolean originPost, List<String> likeUserIds, List<String> dislikeUserIds) {
+            super(id, ownerId, username, postTime, lastEditTime, content, likeUserIds, dislikeUserIds);
+            this.originPost = originPost;
             this.topicId = topicId;
         }
     }
@@ -55,21 +51,12 @@ public abstract class TextBlock {
     @Document
     public static class Comment extends TextBlock {
 
-        public enum MasterType {
-            POST, REPLY
-        }
-
-        @Getter
-        @Setter
-        private String masterType;
-
         @Getter
         @Setter
         private String masterId;
 
-        public Comment(String id, MasterType masterType, String masterId, String ownerId, LocalDateTime postDateTime, LocalDateTime lastEditDateTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
-            super(id, ownerId, postDateTime, lastEditDateTime, content, likeUserIds, dislikeUserIds);
-            this.masterType = masterType.name();
+        public Comment(String id, String masterId, String ownerId, String username, Long postTime, Long lastEditTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
+            super(id, ownerId, username, postTime, lastEditTime, content, likeUserIds, dislikeUserIds);
             this.masterId = masterId;
         }
     }

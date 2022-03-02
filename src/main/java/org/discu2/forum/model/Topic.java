@@ -1,5 +1,6 @@
 package org.discu2.forum.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -16,10 +17,16 @@ public class Topic {
     private String id;
 
     private String boardId;
-    private String posterId;
+    private String ownerId;
+    private String username;
     private String title;
+    private String lastPosterId;
+    private String lastPosterUsername;
+
+    private Long createTime;
+    private Long lastPostTime;
+
     private boolean pinned;
     private int pinnedOrder;
-    private LocalDateTime createDateTime;
 
 }

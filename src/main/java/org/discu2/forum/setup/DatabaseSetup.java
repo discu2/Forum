@@ -49,6 +49,6 @@ public class DatabaseSetup {
         }
 
         if (boardRepository.findAll().isEmpty())
-            boardService.createNewBoard("Default", "Default Group", "DEFAULT");
+            boardService.createNewBoard("Default Group", "Default Board", "DEFAULT");
     }
 }

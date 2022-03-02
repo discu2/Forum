@@ -15,7 +15,16 @@ import java.util.*;
 @Document
 public class Board {
 
-    public static final List<String> PERMISSIONS = Lists.newArrayList("moderator", "access", "post", "reply", "comment", "edit");
+    public static final String PERMISSION_ACCESS = "access";
+    public static final String PERMISSION_POST = "post";
+    public static final String PERMISSION_REPLY = "reply";
+    public static final String PERMISSION_COMMENT = "comment";
+    public static final String PERMISSION_EDIT = "edit";
+    public static final String PERMISSION_MODERATOR = "moderator";
+
+    public static final List<String> PERMISSIONS = Lists.newArrayList(PERMISSION_ACCESS, PERMISSION_POST, PERMISSION_REPLY, PERMISSION_COMMENT, PERMISSION_EDIT, PERMISSION_MODERATOR);
+    public static final List<String> BASIC_PERMISSIONS = Lists.newArrayList(PERMISSION_ACCESS, PERMISSION_POST, PERMISSION_REPLY, PERMISSION_COMMENT, PERMISSION_EDIT);
+
     private static RoleRepository roleRepository = SpringContext.getBean(RoleRepository.class);
 
     @Id

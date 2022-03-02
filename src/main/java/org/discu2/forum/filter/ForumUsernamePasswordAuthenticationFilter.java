@@ -50,7 +50,7 @@ public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordA
             response.setContentType(APPLICATION_JSON_VALUE);
 
             try {
-                JsonConverter.PacketToJsonResponse(response.getOutputStream(), msg);
+                JsonConverter.PacketToJsonResponse(response, msg);
             } catch (IOException ex) { }
         }
 
@@ -60,13 +60,12 @@ public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordA
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
-        var account = (Account.UserDetailImpl)authResult.getPrincipal();
+        var account = (Account)authResult.getPrincipal();
         var accessToken = TokenFactory.createAccessToken(account, request);
         var refreshToken = TokenFactory.createRefreshToken(account, request);
 
         var packet = new TokenPacket(accessToken, refreshToken);
 
-        response.setContentType(APPLICATION_JSON_VALUE);
-        JsonConverter.PacketToJsonResponse(response.getOutputStream(), packet);
+        JsonConverter.PacketToJsonResponse(response, packet);
     }
 }

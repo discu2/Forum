@@ -44,7 +44,7 @@ public class AccountService implements UserDetailsService {
                 null,
                 username,
                 passwordEncoder.encode(password),
-                Strings.isNullOrEmpty(nickname) ? Sets.newHashSet(roleService.loadRoleByName("DEFAULT").getId()) : Sets.newHashSet(roleId),
+                Strings.isNullOrEmpty(roleId) ? Sets.newHashSet(roleService.loadRoleByName("DEFAULT").getId()) : Sets.newHashSet(roleId),
                 true,
                 true,
                 true,
@@ -68,8 +68,8 @@ public class AccountService implements UserDetailsService {
         var accountByMail = getAccountByMail(username);
         var accountByName = getAccountByName(username);
 
-        if (accountByMail.isPresent()) return accountByMail.get().getUserDetails();
-        if (accountByName.isPresent()) return accountByName.get().getUserDetails();
+        if (accountByMail.isPresent()) return accountByMail.get();
+        if (accountByName.isPresent()) return accountByName.get();
 
         throw new UsernameNotFoundException(String.format("Username %s not found", username));
     }
@@ -78,7 +78,7 @@ public class AccountService implements UserDetailsService {
 
         if (Strings.isNullOrEmpty(uuid)) return false;
 
-        if (!((Account.UserDetailImpl) account).getRefreshTokens().contains(uuid)) return false;
+        if (!((Account) account).getRefreshTokenUUIDs().contains(uuid)) return false;
 
         return true;
     }

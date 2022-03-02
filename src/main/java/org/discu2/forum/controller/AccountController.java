@@ -11,6 +11,7 @@ import org.discu2.forum.packet.TokenPacket;
 import org.discu2.forum.service.AccountService;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,11 +62,10 @@ public class AccountController {
             return;
         }
 
-        var accessToken = TokenFactory.createAccessToken((Account.UserDetailImpl) account, request);
+        var accessToken = TokenFactory.createAccessToken((Account) account, request);
         var packet = new TokenPacket(accessToken, refreshToken);
 
-        response.setContentType(APPLICATION_JSON_VALUE);
-        JsonConverter.PacketToJsonResponse(response.getOutputStream(), packet);
+        JsonConverter.PacketToJsonResponse(response, packet);
 
     }
 

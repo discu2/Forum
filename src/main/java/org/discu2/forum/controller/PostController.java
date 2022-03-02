@@ -1,18 +1,17 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.TextBlock;
 import org.discu2.forum.packet.TextBlockRequestPacket;
 import org.discu2.forum.service.PostService;
 import org.discu2.forum.util.JsonConverter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/post")
@@ -21,26 +20,40 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/create")
-    public void createPost(HttpServletRequest request) throws IOException {
+    @PreAuthorize("hasPermission(#boardId, 'Board', 'post')")
+    @PostMapping("/{boardId}")
+    public void createPost(@PathVariable("boardId") String boardId,
+            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.Post.class);
         var username = request.getUserPrincipal().getName();
 
-        postService.createNewPost(packet.getBoardGroupName(), packet.getBoardName(), username, packet.getTitle(), packet.getContent());
+        postService.createNewPost(boardId, username, packet.getTitle(), packet.getContent(), true);
 
     }
 
-    @GetMapping("/get")
-    public void getPostByTopicId(@RequestParam String topicId, HttpServletResponse response) throws IOException {
+    @PreAuthorize("hasPermission(#boardId, 'Board', 'reply')")
+    @PostMapping("/reply/{boardId}")
+    public void createReply(@PathVariable("boardId") String boardId,
+                           HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.Post.class);
+        var username = request.getUserPrincipal().getName();
+
+        postService.createNewPost(boardId, username, packet.getTitle(), packet.getContent(), false);
+
+    }
+
+    @GetMapping("/get/{topicId}")
+    public void getPostByTopicId(@PathVariable("topicId") String topicId, HttpServletResponse response) throws IOException {
 
         var topic = postService.loadPostByTopicId(topicId);
 
-        JsonConverter.PacketToJsonResponse(response.getOutputStream(), topic);
+        JsonConverter.PacketToJsonResponse(response, topic);
     }
 
-    @PutMapping("edit")
-    public void editPost(@RequestParam String topicId ,HttpServletRequest request) throws IOException {
+    @PutMapping("/edit/{topicId}")
+    public void editPost(@PathVariable("topicId") String topicId ,HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlock.Post.class);
 

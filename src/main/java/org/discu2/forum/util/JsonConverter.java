@@ -4,17 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.discu2.forum.exception.BadPacketFormatException;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 public class JsonConverter {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public static void PacketToJsonResponse(OutputStream stream, Object packet) throws IOException {
-        MAPPER.writeValue(stream, packet);
+    public static void PacketToJsonResponse(HttpServletResponse response, Object packet) throws IOException {
+        response.setContentType(APPLICATION_JSON_VALUE);
+        MAPPER.writeValue(response.getOutputStream(), packet);
     }
 
     public static <T> T requestToPacket(InputStream stream, Class<T> packet) throws BadPacketFormatException {

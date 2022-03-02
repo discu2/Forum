@@ -65,9 +65,8 @@ public class TokenAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            response.setContentType(APPLICATION_JSON_VALUE);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            JsonConverter.PacketToJsonResponse(response.getOutputStream(), new ErrorMessagePacket(HttpStatus.FORBIDDEN, e.getMessage()));
+            JsonConverter.PacketToJsonResponse(response, new ErrorMessagePacket(HttpStatus.FORBIDDEN, e.getMessage()));
         }
 
     }

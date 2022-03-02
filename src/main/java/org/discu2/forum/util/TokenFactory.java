@@ -17,7 +17,7 @@ public class TokenFactory {
     private static final AccountService ACCOUNT_SERVICE = SpringContext.getBean(AccountService.class);
     public static final Algorithm ALGORITHM = Algorithm.HMAC512("this is not good".getBytes());
 
-    public static String createAccessToken(Account.UserDetailImpl account, HttpServletRequest request) {
+    public static String createAccessToken(Account account, HttpServletRequest request) {
 
         var ip = request.getRemoteAddr();
 
@@ -32,7 +32,7 @@ public class TokenFactory {
 
     }
 
-    public static String createRefreshToken(Account.UserDetailImpl account, HttpServletRequest request) {
+    public static String createRefreshToken(Account account, HttpServletRequest request) {
 
         var uuid = UUID.randomUUID().toString();
 
@@ -43,7 +43,7 @@ public class TokenFactory {
                 .withClaim("uuid", uuid)
                 .sign(ALGORITHM);
 
-        ACCOUNT_SERVICE.addNewRefreshTokenUUID(account.account, uuid);
+        ACCOUNT_SERVICE.addNewRefreshTokenUUID(account, uuid);
 
         return token;
     }

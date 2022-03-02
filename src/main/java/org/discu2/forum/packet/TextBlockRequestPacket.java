@@ -9,8 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public abstract class TextBlockRequestPacket {
 
-    String boardGroupName;
-    String boardName;
     String content;
 
     @NoArgsConstructor
