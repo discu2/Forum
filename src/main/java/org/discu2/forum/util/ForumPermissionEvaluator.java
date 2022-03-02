@@ -2,6 +2,8 @@ package org.discu2.forum.util;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.repository.BoardRepository;
+import org.discu2.forum.repository.PostRepository;
+import org.discu2.forum.repository.TopicRepository;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -12,13 +14,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ForumPermissionEvaluator implements PermissionEvaluator {
 
+    private final PostRepository postRepository;
+    private final TopicRepository topicRepository;
     private final BoardRepository boardRepository;
 
     /**
-     *
      * @param authentication
      * @param targetDomainObject - 目標物件類型
-     * @param permission - 權限類型
+     * @param permission         - 權限類型
      * @return
      */
     @Override
@@ -31,16 +34,16 @@ public class ForumPermissionEvaluator implements PermissionEvaluator {
     }
 
     /**
-     *
      * @param authentication
-     * @param targetId - 名稱
-     * @param targetType -
+     * @param targetId       - 名稱
+     * @param targetType     -
      * @param permission
      * @return
      */
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        if ((authentication == null) || (targetId == null) || (targetType == null) || !(permission instanceof String)) return false;
+        if ((authentication == null) || (targetId == null) || (targetType == null) || !(permission instanceof String))
+            return false;
 
         if (authentication.getAuthorities().contains("ADMIN")) return true;
 
@@ -48,6 +51,10 @@ public class ForumPermissionEvaluator implements PermissionEvaluator {
 
             case "Board" -> {
                 return hasBoardPermission(authentication, (String) targetId, (String) permission);
+            }
+
+            case "Comment" -> {
+                return hasCommentPermission(authentication, (String) targetId, (String) permission);
             }
 
             default -> {
@@ -67,5 +74,19 @@ public class ForumPermissionEvaluator implements PermissionEvaluator {
             if (board.getPermissions().get(permission).contains(a.getAuthority())) return true;
 
         return false;
+    }
+
+    private boolean hasCommentPermission(Authentication auth, String masterId, String permission) {
+
+        var topic = postRepository.findById(masterId).get();
+
+        if (topic == null) return false;
+
+        var board = topicRepository.findById(topic.getTopicId());
+
+        if (board == null) return false;
+
+        return hasBoardPermission(auth, board.get().getBoardId(), permission);
+
     }
 }
