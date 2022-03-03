@@ -2,6 +2,7 @@ package org.discu2.forum.service;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.repository.BoardRepository;
+import org.discu2.forum.repository.CommentRepository;
 import org.discu2.forum.repository.PostRepository;
 import org.discu2.forum.repository.TopicRepository;
 import org.springframework.security.access.PermissionEvaluator;
@@ -17,6 +18,7 @@ public class ForumPermissionService implements PermissionEvaluator {
     private final PostRepository postRepository;
     private final TopicRepository topicRepository;
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * @param authentication
@@ -53,6 +55,14 @@ public class ForumPermissionService implements PermissionEvaluator {
                 return hasBoardPermission(authentication, (String) targetId, (String) permission);
             }
 
+            case "Topic" -> {
+                return hasTopicPermission(authentication, (String) targetId, (String) permission);
+            }
+
+            case "Post" -> {
+                return hasPostPermission(authentication, (String) targetId, (String) permission);
+            }
+
             case "Comment" -> {
                 return hasCommentPermission(authentication, (String) targetId, (String) permission);
             }
@@ -76,17 +86,30 @@ public class ForumPermissionService implements PermissionEvaluator {
         return false;
     }
 
-    private boolean hasCommentPermission(Authentication auth, String masterId, String permission) {
+    private boolean hasTopicPermission(Authentication auth, String topicId, String permission) {
 
-        var post = postRepository.findById(masterId);
+        var topic = topicRepository.findById(topicId);
 
-        if (post == null) return false;
+        if (topic.isEmpty()) return false;
 
-        var topic = topicRepository.findById(post.get().getTopicId());
+        return hasBoardPermission(auth, topic.get().getId(), permission);
+    }
 
-        if (topic == null) return false;
+    private boolean hasPostPermission(Authentication auth, String postId, String permission) {
 
-        return hasBoardPermission(auth, topic.get().getBoardId(), permission);
+        var post = postRepository.findById(postId);
 
+        if (post.isEmpty()) return false;
+
+        return hasTopicPermission(auth, post.get().getId(), permission);
+    }
+
+    private boolean hasCommentPermission(Authentication auth, String commentId, String permission) {
+
+        var comment = commentRepository.findById(commentId);
+
+        if (comment.isEmpty()) return false;
+
+        return hasPostPermission(auth, comment.get().getId(), permission);
     }
 }

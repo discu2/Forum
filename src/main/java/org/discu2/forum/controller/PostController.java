@@ -32,24 +32,25 @@ public class PostController {
 
     }
 
-    @PreAuthorize("hasPermission(#boardId, 'Board', 'reply')")
-    @PostMapping("/reply/{boardId}")
-    public void createReply(@PathVariable("boardId") String boardId,
-                           HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @PreAuthorize("hasPermission(#topicId, 'Topic', 'reply')")
+    @PostMapping("/reply/{topicId}")
+    public void createReply(@PathVariable("topicId") String topicId,
+                            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.Post.class);
         var username = request.getUserPrincipal().getName();
 
-        postService.createNewPost(boardId, username, packet.getTitle(), packet.getContent(), false);
+        postService.createNewPost(topicId, username, packet.getTitle(), packet.getContent(), false);
 
     }
 
     @GetMapping("/get/{topicId}")
-    public void getPostByTopicId(@PathVariable("topicId") String topicId, HttpServletResponse response) throws IOException {
+    public void getPosts(@PathVariable("topicId") String topicId, @RequestParam int page, @RequestParam("page_size") int pageSize,
+                                 HttpServletResponse response) throws IOException {
 
-        var topic = postService.loadPostByTopicId(topicId);
+        var posts = postService.loadPostsByTopicId(topicId, page, pageSize);
 
-        JsonConverter.PacketToJsonResponse(response, topic);
+        JsonConverter.PacketToJsonResponse(response, posts);
     }
 
     @PutMapping("/edit/{topicId}")
