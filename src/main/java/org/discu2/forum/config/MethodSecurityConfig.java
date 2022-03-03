@@ -1,7 +1,7 @@
 package org.discu2.forum.config;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.util.ForumPermissionEvaluator;
+import org.discu2.forum.service.ForumPermissionService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -13,7 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 
-    private ForumPermissionEvaluator forumPermissionEvaluator;
+    private ForumPermissionService forumPermissionEvaluator;
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {

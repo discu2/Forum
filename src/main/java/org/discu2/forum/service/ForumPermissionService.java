@@ -1,4 +1,4 @@
-package org.discu2.forum.util;
+package org.discu2.forum.service;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.repository.BoardRepository;
@@ -6,13 +6,13 @@ import org.discu2.forum.repository.PostRepository;
 import org.discu2.forum.repository.TopicRepository;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 
-@Component
+@Service
 @AllArgsConstructor
-public class ForumPermissionEvaluator implements PermissionEvaluator {
+public class ForumPermissionService implements PermissionEvaluator {
 
     private final PostRepository postRepository;
     private final TopicRepository topicRepository;
@@ -78,15 +78,15 @@ public class ForumPermissionEvaluator implements PermissionEvaluator {
 
     private boolean hasCommentPermission(Authentication auth, String masterId, String permission) {
 
-        var topic = postRepository.findById(masterId).get();
+        var post = postRepository.findById(masterId);
+
+        if (post == null) return false;
+
+        var topic = topicRepository.findById(post.get().getTopicId());
 
         if (topic == null) return false;
 
-        var board = topicRepository.findById(topic.getTopicId());
-
-        if (board == null) return false;
-
-        return hasBoardPermission(auth, board.get().getBoardId(), permission);
+        return hasBoardPermission(auth, topic.get().getBoardId(), permission);
 
     }
 }
