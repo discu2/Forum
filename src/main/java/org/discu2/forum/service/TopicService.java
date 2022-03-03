@@ -58,12 +58,7 @@ public class TopicService {
 
         var boardId = boardService.loadBoardByGroupNameAndName(boardGroupName, boardName).getId();
 
-        var topics = loadPinnedTopicByBoardId(boardId, page, pageSize);
-        var notPinnedTopics = loadTopicsByBoard(boardGroupName, page, pageSize - topics.size());
-
-        topics.addAll(notPinnedTopics);
-
-        return topics;
+        return loadTopicsByBoard(boardId, page, pageSize);
     }
 
     public List<Topic> loadPinnedTopicByBoardId(@NonNull String boardId, int page, int pageSize) {
@@ -76,14 +71,21 @@ public class TopicService {
         return mongoTemplate.find(query, Topic.class);
     }
 
+    /**
+     *
+     * @return A List of topic with pinned topic(s) on top
+     */
     public List<Topic> loadTopicsByBoard(@NonNull String boardId, int page, int pageSize) {
 
+        var topics = loadPinnedTopicByBoardId(boardId, page, pageSize);
         var query = Query.query(Criteria.where("boardId").is(boardId).and("pinned").is(false))
                 .with(Sort.by("lastPostTime").descending())
                 .skip((page - 1) * pageSize).
-                limit(pageSize);
+                limit(pageSize- topics.size());
 
-        return mongoTemplate.find(query, Topic.class);
+        topics.addAll(mongoTemplate.find(query, Topic.class));
+
+        return topics;
     }
 
     public Topic loadTopicById(@NonNull String id) throws DataNotFoundException {
