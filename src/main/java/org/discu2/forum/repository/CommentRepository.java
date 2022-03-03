@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CommentRepository extends MongoRepository<TextBlock.Comment, String> {
 
-    List<TextBlock.Comment> findByMasterId(String masterId);
+    List<TextBlock.Comment> findByPostId(String masterId);
 }
 

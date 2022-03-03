@@ -20,19 +20,19 @@ public class CommentService {
     private final AccountService accountService;
     private final PostService postService;
 
-    public TextBlock.Comment createNewComment(@NonNull String masterId,
+    public TextBlock.Comment createNewComment(@NonNull String postId,
                                               @NonNull String username,
                                               @NonNull String content) throws DataNotFoundException {
 
         // Make sure mater is existed
-        postService.loadById(masterId);
+        postService.loadById(postId);
 
         var accountId = ((Account) accountService.loadUserByUsername(username)).getId();
         var now = new Date().getTime();
 
         var post = new TextBlock.Comment(
                 null,
-                masterId,
+                postId,
                 accountId,
                 username,
                 now,
@@ -44,11 +44,11 @@ public class CommentService {
         return commentRepository.save(post);
     }
 
-    public List<TextBlock.Comment> loadCommentsByMasterId(@NonNull String masterId) throws DataNotFoundException {
+    public List<TextBlock.Comment> loadCommentsByPostId(@NonNull String postId) throws DataNotFoundException {
 
-        var comments = commentRepository.findByMasterId(masterId);
+        var comments = commentRepository.findByPostId(postId);
 
-        if (comments.isEmpty()) throw new DataNotFoundException(TextBlock.Comment.class, "masterId", masterId);
+        if (comments.isEmpty()) throw new DataNotFoundException(TextBlock.Comment.class, "postId", postId);
 
         return comments;
     }

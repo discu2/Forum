@@ -6,6 +6,7 @@ import org.discu2.forum.service.CommentService;
 import org.discu2.forum.util.JsonConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,23 +22,23 @@ public class CommentController {
 
     private CommentService commentService;
 
-    @PreAuthorize("hasPermission(#masterId, 'Comment', 'comment')")
-    @PostMapping("/{masterId}")
-    public void createComment(@PathVariable("masterId") String masterId,
+    @PreAuthorize("hasPermission(#postId, 'Post', 'comment')")
+    @PostMapping("/{postId}")
+    public void createComment(@PathVariable("postId") String postId,
                            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.class);
         var username = request.getUserPrincipal().getName();
 
-        commentService.createNewComment(masterId, username, packet.getContent());
-
-
+        commentService.createNewComment(postId, username, packet.getContent());
 
     }
 
-    public void getCommentByMasterId(@PathVariable("masterId") String masterId, HttpServletResponse response) throws IOException {
+    @PreAuthorize("hasPermission(#postId, 'Post', 'access')")
+    @GetMapping("/get/{postId}")
+    public void getComments(@PathVariable("postId") String postId, HttpServletResponse response) throws IOException {
 
-        var comments = commentService.loadCommentsByMasterId(masterId);
+        var comments = commentService.loadCommentsByPostId(postId);
 
         JsonConverter.PacketToJsonResponse(response, comments);
     }

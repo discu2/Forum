@@ -51,11 +51,11 @@ public abstract class TextBlock {
 
         @Getter
         @Setter
-        private String masterId;
+        private String postId;
 
-        public Comment(String id, String masterId, String ownerId, String username, Long postTime, Long lastEditTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
+        public Comment(String id, String postId, String ownerId, String username, Long postTime, Long lastEditTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
             super(id, ownerId, username, postTime, lastEditTime, content, likeUserIds, dislikeUserIds);
-            this.masterId = masterId;
+            this.postId = postId;
         }
     }
 }
