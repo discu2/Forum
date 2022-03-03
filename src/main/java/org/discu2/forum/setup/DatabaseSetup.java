@@ -2,6 +2,7 @@ package org.discu2.forum.setup;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.exception.AlreadyExistException;
+import org.discu2.forum.exception.BadPacketFormatException;
 import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Role;
 import org.discu2.forum.repository.BoardRepository;
@@ -22,7 +23,7 @@ public class DatabaseSetup {
     private final AccountService accountService;
 
     @Bean
-    public void initDefaults() throws AlreadyExistException, DataNotFoundException {
+    public void initDefaults() throws AlreadyExistException, DataNotFoundException, BadPacketFormatException {
 
         Role adminRole;
 
@@ -41,7 +42,7 @@ public class DatabaseSetup {
         try {
             accountService.loadUserByUsername("admin");
         } catch (Exception e) {
-            accountService.registerNewAccount("admin", "admin", adminRole.getId(), "admin@mail.com", null);
+            accountService.registerNewAccount("admin", "adminpass1", adminRole.getId(), "admin@mail.com", null);
         }
 
         if (boardRepository.findAll().isEmpty())

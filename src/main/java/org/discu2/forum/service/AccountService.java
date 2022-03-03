@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.discu2.forum.exception.AlreadyExistException;
+import org.discu2.forum.exception.BadPacketFormatException;
 import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.repository.AccountRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.discu2.forum.model.Account.MAX_REFRESH_TOKENS;
 
@@ -27,18 +29,21 @@ public class AccountService implements UserDetailsService {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Z0-9._].{4,16}$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[A-Z])(?=\\S+$).{8,64}$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
     /**
      *
-     * @param username
-     * @param password
      * @param roleId - Leave this null or empty String to use DEFAULT role
-     * @param mail
      * @param nickname - Leave this null or empty String to use username for nickname
-     * @return
-     * @throws AlreadyExistException
      */
     public Account registerNewAccount(@NonNull String username, @NonNull String password, String roleId, @NonNull String mail, String nickname)
-            throws AlreadyExistException, DataNotFoundException {
+            throws AlreadyExistException, DataNotFoundException, BadPacketFormatException {
+
+        validateUsername(username);
+        validatePassword(password);
+        validateMail(mail);
 
         var account = new Account(
                 null,
@@ -99,6 +104,21 @@ public class AccountService implements UserDetailsService {
 
     private Optional<Account> getAccountByName(@NonNull String name) {
         return accountRepository.findAccountByUsername(name);
+    }
+
+    private void validateUsername(String string) throws BadPacketFormatException {
+        if (!USERNAME_PATTERN.matcher(string).find())
+            throw new BadPacketFormatException("username does not match " + USERNAME_PATTERN.pattern());
+    }
+
+    private void validatePassword(String string) throws BadPacketFormatException {
+        if (!PASSWORD_PATTERN.matcher(string).find())
+            throw new BadPacketFormatException("password does not match " + PASSWORD_PATTERN.pattern());
+    }
+
+    private void validateMail(String string) throws BadPacketFormatException {
+        if (!MAIL_PATTERN.matcher(string).find())
+            throw new BadPacketFormatException("mail does not match " + MAIL_PATTERN.pattern());
     }
 
 }
