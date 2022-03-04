@@ -82,4 +82,10 @@ public class BoardService {
         return boardRepository.findByGroupNameAndAndName(groupName, name).orElseThrow(() -> new DataNotFoundException(Board.class, "groupName:name", groupName + ":" + name));
     }
 
+    public void deleteByGroupNameAndName(@NonNull String groupName, @NonNull String name) throws DataNotFoundException, IllegalArgumentException {
+
+        var board = loadBoardByGroupNameAndName(groupName, name);
+        boardRepository.delete(board);
+    }
+
 }

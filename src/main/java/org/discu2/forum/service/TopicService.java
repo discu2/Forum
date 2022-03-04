@@ -1,15 +1,19 @@
 package org.discu2.forum.service;
 
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
+import org.discu2.forum.model.TextBlock;
 import org.discu2.forum.model.Topic;
+import org.discu2.forum.repository.PostRepository;
 import org.discu2.forum.repository.TopicRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,22 +24,27 @@ import java.util.List;
 public class TopicService {
 
     private final TopicRepository topicRepository;
+    private final PostService postService;
     private final MongoTemplate mongoTemplate;
     private final AccountService accountService;
     private final BoardService boardService;
 
-    public Topic addNewTopic(@NonNull String boardGroupName,
-                             @NonNull String boardName,
-                             @NonNull String username,
-                             @NonNull String title) throws DataNotFoundException {
-
-        return addNewTopic(boardService.loadBoardByGroupNameAndName(boardGroupName, boardName).getId(),
-                username, title);
-    }
-
-    public Topic addNewTopic(@NonNull String boardId, @NonNull String username, @NonNull String title) {
+    public TextBlock.Post createNewTopicWithPost(@NonNull String boardId,
+                                        @NonNull String username,
+                                        @NonNull String title,
+                                        @NonNull String content) throws UsernameNotFoundException, DataNotFoundException {
 
         var accountId = ((Account) accountService.loadUserByUsername(username)).getId();
+        var topic = createNewTopic(boardId, accountId, username, title);
+
+        return postService.createNewPost(topicRepository.save(topic).getId(), accountId, username, content, true);
+    }
+
+    private Topic createNewTopic(@NonNull String boardId,
+                                 @NonNull String accountId,
+                                 @NonNull String username,
+                                 @NonNull String title) throws UsernameNotFoundException {
+
         var now = new Date().getTime();
 
         var topic = new Topic(null,

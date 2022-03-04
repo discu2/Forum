@@ -35,7 +35,7 @@ public class CommentController {
     }
 
     @PreAuthorize("hasPermission(#postId, 'Post', 'access')")
-    @GetMapping("/get/{postId}")
+    @GetMapping("/{postId}")
     public void getComments(@PathVariable("postId") String postId, HttpServletResponse response) throws IOException {
 
         var comments = commentService.loadCommentsByPostId(postId);

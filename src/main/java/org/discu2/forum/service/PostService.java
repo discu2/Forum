@@ -1,5 +1,6 @@
 package org.discu2.forum.service;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -26,19 +27,29 @@ public class PostService {
     private final AccountService accountService;
     private final MongoTemplate mongoTemplate;
 
-    public TextBlock.Post createNewPost(@NonNull String boardId,
+    public TextBlock.Post createNewPost(@NonNull String topicId,
                                         @NonNull String username,
-                                        @NonNull String title,
                                         @NonNull String content,
-                                        Boolean isOriginPost) throws UsernameNotFoundException {
+                                        Boolean isOriginPost) throws UsernameNotFoundException, DataNotFoundException {
 
-        var topic = topicService.addNewTopic(boardId, username, title);
         var accountId = ((Account) accountService.loadUserByUsername(username)).getId();
+
+        return createNewPost(topicId, accountId, username, content, isOriginPost);
+    }
+
+    public TextBlock.Post createNewPost(@NonNull String topicId,
+                                        @NonNull String accountId,
+                                        @NonNull String username,
+                                        @NonNull String content,
+                                        Boolean isOriginPost) throws UsernameNotFoundException, DataNotFoundException {
+
+        topicService.loadTopicById(topicId);
+
         var now = new Date().getTime();
 
         var post = new TextBlock.Post(
                 null,
-                topic.getId(),
+                topicId,
                 accountId,
                 username,
                 now,
