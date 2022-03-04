@@ -20,12 +20,7 @@ public class ForumPermissionService implements PermissionEvaluator {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
 
-    /**
-     * @param authentication
-     * @param targetDomainObject - 目標物件類型
-     * @param permission         - 權限類型
-     * @return
-     */
+
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         if ((authentication == null) || (targetDomainObject == null) || !(permission instanceof String)) return false;
@@ -36,11 +31,7 @@ public class ForumPermissionService implements PermissionEvaluator {
     }
 
     /**
-     * @param authentication
-     * @param targetId       - 名稱
-     * @param targetType     -
-     * @param permission
-     * @return
+     * @param targetType - A String of the model class name
      */
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
@@ -76,12 +67,12 @@ public class ForumPermissionService implements PermissionEvaluator {
 
     private boolean hasBoardPermission(Authentication auth, String boardId, String permission) {
 
-        var board = boardRepository.findById(boardId).get();
+        var board = boardRepository.findById(boardId);
 
-        if (board == null) return false;
+        if (board.isEmpty()) return false;
 
         for (var a : auth.getAuthorities())
-            if (board.getPermissions().get(permission).contains(a.getAuthority())) return true;
+            if (board.get().getPermissions().get(permission).contains(a.getAuthority())) return true;
 
         return false;
     }
@@ -92,7 +83,7 @@ public class ForumPermissionService implements PermissionEvaluator {
 
         if (topic.isEmpty()) return false;
 
-        return hasBoardPermission(auth, topic.get().getId(), permission);
+        return hasBoardPermission(auth, topic.get().getBoardId(), permission);
     }
 
     private boolean hasPostPermission(Authentication auth, String postId, String permission) {
@@ -101,7 +92,7 @@ public class ForumPermissionService implements PermissionEvaluator {
 
         if (post.isEmpty()) return false;
 
-        return hasTopicPermission(auth, post.get().getId(), permission);
+        return hasTopicPermission(auth, post.get().getTopicId(), permission);
     }
 
     private boolean hasCommentPermission(Authentication auth, String commentId, String permission) {
@@ -110,6 +101,6 @@ public class ForumPermissionService implements PermissionEvaluator {
 
         if (comment.isEmpty()) return false;
 
-        return hasPostPermission(auth, comment.get().getId(), permission);
+        return hasPostPermission(auth, comment.get().getPostId(), permission);
     }
 }

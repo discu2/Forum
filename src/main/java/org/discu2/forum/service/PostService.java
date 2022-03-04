@@ -7,6 +7,7 @@ import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.model.TextBlock;
 import org.discu2.forum.repository.PostRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,7 +23,9 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final TopicService topicService;
+
+    @Lazy
+    private TopicService topicService;
     private final AccountService accountService;
     private final MongoTemplate mongoTemplate;
 

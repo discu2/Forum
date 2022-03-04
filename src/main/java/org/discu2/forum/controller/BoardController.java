@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Slf4j
 @RestController
 @RequestMapping("/board")
 @AllArgsConstructor
@@ -38,6 +37,7 @@ public class BoardController {
 
     }
 
+    @Secured("ADMIN")
     @PostMapping
     public void createBoard(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -49,6 +49,7 @@ public class BoardController {
 
     }
 
+    @Secured("ADMIN")
     @DeleteMapping("/{groupName}/{name}")
     public void deleteBoard(@PathVariable String groupName, @PathVariable String name,
             HttpServletRequest request, HttpServletResponse response) throws DataNotFoundException {

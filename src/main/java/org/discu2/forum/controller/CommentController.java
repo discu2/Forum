@@ -5,6 +5,7 @@ import org.discu2.forum.packet.TextBlockRequestPacket;
 import org.discu2.forum.service.CommentService;
 import org.discu2.forum.util.JsonConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class CommentController {
                            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.class);
-        var username = request.getUserPrincipal().getName();
+        var username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         commentService.createNewComment(postId, username, packet.getContent());
 

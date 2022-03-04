@@ -40,7 +40,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/account/register", "/account/refresh_token").permitAll()
-                .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest()
                 .authenticated();
 
