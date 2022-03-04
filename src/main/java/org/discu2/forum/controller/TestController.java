@@ -1,6 +1,5 @@
 package org.discu2.forum.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,7 +16,6 @@ public class TestController {
         return map;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public void admin(){
         get();

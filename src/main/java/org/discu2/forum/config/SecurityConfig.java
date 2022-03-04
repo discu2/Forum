@@ -43,6 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated();
 
+        http.authorizeRequests()
+                .antMatchers("/**").hasRole("ADMIN")
+                .anyRequest()
+                .authenticated();
+
         http.addFilter(jwtAuthFilter);
         http.addFilterBefore(new TokenAuthFilter(), ForumUsernamePasswordAuthenticationFilter.class);
 

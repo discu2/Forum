@@ -8,6 +8,7 @@ import org.discu2.forum.packet.CreateBoardRequestPacket;
 import org.discu2.forum.service.BoardService;
 import org.discu2.forum.util.JsonConverter;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    @PreAuthorize("permitAll()")
     @GetMapping
     public void getAllBoards(HttpServletResponse response) throws IOException {
 
@@ -36,7 +38,6 @@ public class BoardController {
 
     }
 
-    @Secured("ADMIN")
     @PostMapping
     public void createBoard(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -48,7 +49,6 @@ public class BoardController {
 
     }
 
-    @Secured("ADMIN")
     @DeleteMapping("/{groupName}/{name}")
     public void deleteBoard(@PathVariable String groupName, @PathVariable String name,
             HttpServletRequest request, HttpServletResponse response) throws DataNotFoundException {

@@ -33,6 +33,7 @@ public class PostController {
 
     }
 
+    @PreAuthorize("hasPermission(#topicId, 'Topic', 'access')")
     @GetMapping("/{topicId}")
     public void getPosts(@PathVariable("topicId") String topicId, @RequestParam int page, @RequestParam("page_size") int pageSize,
                                  HttpServletResponse response) throws IOException {
@@ -42,6 +43,7 @@ public class PostController {
         JsonConverter.PacketToJsonResponse(response, posts);
     }
 
+    @PreAuthorize("hasPermission(#topicId, 'Topic', 'edit')")
     @PutMapping("/{topicId}")
     public void editPost(@PathVariable("topicId") String topicId ,HttpServletRequest request, HttpServletResponse response) throws IOException {
 

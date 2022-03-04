@@ -31,7 +31,7 @@ public class TopicController {
 
     }
 
-    @PostAuthorize("hasPermission(#boardId, 'Board', 'access') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasPermission(#boardId, 'Board', 'access')")
     @GetMapping("/{boardId}")
     public void getTopics(@RequestParam int page, @RequestParam int page_size,
                           @PathVariable("boardId") String boardId,
