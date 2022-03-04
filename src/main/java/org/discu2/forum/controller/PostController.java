@@ -20,17 +20,6 @@ public class PostController {
 
     private final PostService postService;
 
-    @PreAuthorize("hasPermission(#boardId, 'Board', 'post')")
-    @PostMapping("/{boardId}")
-    public void createPost(@PathVariable("boardId") String boardId,
-            HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.Post.class);
-        var username = request.getUserPrincipal().getName();
-
-        postService.createNewPost(boardId, username, packet.getTitle(), packet.getContent(), true);
-
-    }
 
     @PreAuthorize("hasPermission(#topicId, 'Topic', 'reply')")
     @PostMapping("/{topicId}")
@@ -40,7 +29,7 @@ public class PostController {
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.Post.class);
         var username = request.getUserPrincipal().getName();
 
-        postService.createNewPost(topicId, username, packet.getTitle(), packet.getContent(), false);
+        postService.createNewPost(topicId, username, packet.getContent(), false);
 
     }
 
