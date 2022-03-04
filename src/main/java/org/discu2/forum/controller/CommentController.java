@@ -6,10 +6,7 @@ import org.discu2.forum.service.CommentService;
 import org.discu2.forum.util.JsonConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,9 +33,11 @@ public class CommentController {
 
     @PreAuthorize("hasPermission(#postId, 'Post', 'access')")
     @GetMapping("/{postId}")
-    public void getComments(@PathVariable("postId") String postId, HttpServletResponse response) throws IOException {
+    public void getComments(@PathVariable("postId") String postId,
+                            @RequestParam int page, @RequestParam("page_size") int pageSize,
+                            HttpServletResponse response) throws IOException {
 
-        var comments = commentService.loadCommentsByPostId(postId);
+        var comments = commentService.loadCommentsByPostId(postId, page, pageSize);
 
         JsonConverter.PacketToJsonResponse(response, comments);
     }

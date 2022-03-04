@@ -7,6 +7,10 @@ import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.model.TextBlock;
 import org.discu2.forum.repository.CommentRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -19,6 +23,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final AccountService accountService;
     private final PostService postService;
+    private final MongoTemplate mongoTemplate;
+
 
     public TextBlock.Comment createNewComment(@NonNull String postId,
                                               @NonNull String username,
@@ -44,12 +50,13 @@ public class CommentService {
         return commentRepository.save(post);
     }
 
-    public List<TextBlock.Comment> loadCommentsByPostId(@NonNull String postId) throws DataNotFoundException {
+    public List<TextBlock.Comment> loadCommentsByPostId(@NonNull String postId, int page, int pageSize) throws DataNotFoundException {
 
-        var comments = commentRepository.findByPostId(postId);
+        var query = Query.query(Criteria.where("postId").is(postId))
+                .with(Sort.by("postTime").ascending())
+                .skip((page - 1) * pageSize).
+                limit(pageSize);
 
-        if (comments.isEmpty()) throw new DataNotFoundException(TextBlock.Comment.class, "postId", postId);
-
-        return comments;
+        return mongoTemplate.find(query, TextBlock.Comment.class);
     }
 }
