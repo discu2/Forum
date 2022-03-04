@@ -49,7 +49,7 @@ public class BoardController {
     }
 
     @Secured("ADMIN")
-    @PostMapping("/{groupName}/{name}")
+    @DeleteMapping("/{groupName}/{name}")
     public void deleteBoard(@PathVariable String groupName, @PathVariable String name,
             HttpServletRequest request, HttpServletResponse response) throws DataNotFoundException {
 
