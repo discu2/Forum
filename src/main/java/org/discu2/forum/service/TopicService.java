@@ -46,16 +46,15 @@ public class TopicService {
                                  @NonNull String title) throws UsernameNotFoundException {
 
         var now = new Date().getTime();
-
         var topic = new Topic(null,
                 boardId,
                 accountId,
                 username,
                 title,
-                accountId,
-                username,
+                "",
+                "",
                 now,
-                now,
+                0L,
                 false,
                 0
                 );
@@ -101,4 +100,12 @@ public class TopicService {
         return topicRepository.findById(id).orElseThrow(() -> new DataNotFoundException(Topic.class, "id", id));
     }
 
+    public Topic updateLastPoster(Topic topic, @NonNull String accountId, @NonNull String username, long time) {
+
+        topic.setLastPosterId(accountId);
+        topic.setLastPosterUsername(username);
+        topic.setLastPostTime(time);
+
+        return topicRepository.save(topic);
+    }
 }

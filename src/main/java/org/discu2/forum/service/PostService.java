@@ -32,9 +32,9 @@ public class PostService {
                                         @NonNull String content,
                                         Boolean isOriginPost) throws UsernameNotFoundException, DataNotFoundException {
 
-        var accountId = ((Account) accountService.loadUserByUsername(username)).getId();
+        var accountId = (Account) accountService.loadUserByUsername(username);
 
-        return createNewPost(topicId, accountId, username, content, isOriginPost);
+        return createNewPost(topicId, accountId.getId(), username, content, isOriginPost);
     }
 
     public TextBlock.Post createNewPost(@NonNull String topicId,
@@ -43,10 +43,8 @@ public class PostService {
                                         @NonNull String content,
                                         Boolean isOriginPost) throws UsernameNotFoundException, DataNotFoundException {
 
-        topicService.loadTopicById(topicId);
-
         var now = new Date().getTime();
-
+        var topic = topicService.loadTopicById(topicId);
         var post = new TextBlock.Post(
                 null,
                 topicId,
@@ -58,6 +56,8 @@ public class PostService {
                 isOriginPost,
                 Lists.newArrayList(),
                 Lists.newArrayList());
+
+        topicService.updateLastPoster(topic, accountId, username, now);
 
         return postRepository.save(post);
     }
