@@ -23,7 +23,6 @@ public class Topic {
     private Long createTime;
     private Long lastPostTime;
 
-    private boolean pinned;
     private int pinnedOrder;
 
 }
