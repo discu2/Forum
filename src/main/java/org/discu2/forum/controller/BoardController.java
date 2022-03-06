@@ -38,7 +38,7 @@ public class BoardController {
     }
 
     @Secured("ADMIN")
-    @PostMapping
+    @PostMapping(produces = "application/json")
     public void createBoard(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), CreateBoardRequestPacket.class);

@@ -21,7 +21,7 @@ public class CommentController {
     private CommentService commentService;
 
     @PreAuthorize("hasPermission(#postId, 'Post', 'comment')")
-    @PostMapping("/{postId}")
+    @PostMapping(value = "/{postId}", produces = "application/json")
     public void createComment(@PathVariable("postId") String postId,
                            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -35,8 +35,10 @@ public class CommentController {
     @PreAuthorize("hasPermission(#postId, 'Post', 'access')")
     @GetMapping("/{postId}")
     public void getComments(@PathVariable("postId") String postId,
-                            @RequestParam int page, @RequestParam("page_size") int pageSize,
+                            @RequestParam() int page, @RequestParam(value = "page_size", required = false) int pageSize,
                             HttpServletResponse response) throws IOException {
+
+        if (pageSize == 0) pageSize = 20;
 
         var comments = commentService.loadCommentsByPostId(postId, page, pageSize);
 

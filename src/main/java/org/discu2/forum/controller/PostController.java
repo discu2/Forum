@@ -22,7 +22,7 @@ public class PostController {
 
 
     @PreAuthorize("hasPermission(#topicId, 'Topic', 'reply')")
-    @PostMapping("/{topicId}")
+    @PostMapping(value = "/{topicId}", produces = "application/json")
     public void createReply(@PathVariable("topicId") String topicId,
                             HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -38,13 +38,15 @@ public class PostController {
     public void getPosts(@PathVariable("topicId") String topicId, @RequestParam int page, @RequestParam("page_size") int pageSize,
                                  HttpServletResponse response) throws IOException {
 
+        if (pageSize == 0) pageSize = 10;
+
         var posts = postService.loadPostsByTopicId(topicId, page, pageSize);
 
         JsonConverter.PacketToJsonResponse(response, posts);
     }
 
     @PreAuthorize("hasPermission(#topicId, 'Topic', 'edit')")
-    @PutMapping("/{topicId}")
+    @PutMapping(value = "/{topicId}", produces = "application/json")
     public void editPost(@PathVariable("topicId") String topicId ,HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlock.Post.class);

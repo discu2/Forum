@@ -20,7 +20,7 @@ public class TopicController {
     private final TopicService topicService;
 
     @PreAuthorize("hasPermission(#boardId, 'Board', 'post')")
-    @PostMapping("/{boardId}")
+    @PostMapping(value = "/{boardId}", produces = "application/json")
     public void createPost(@PathVariable("boardId") String boardId,
                            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -33,11 +33,13 @@ public class TopicController {
 
     @PreAuthorize("hasPermission(#boardId, 'Board', 'access')")
     @GetMapping("/{boardId}")
-    public void getTopics(@RequestParam int page, @RequestParam int page_size,
+    public void getTopics(@RequestParam int page, @RequestParam(value = "page_size", required = false) int pageSize,
                           @PathVariable("boardId") String boardId,
                           HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        var topics = topicService.loadTopicsByBoard(boardId, page, page_size);
+        if (pageSize == 0) pageSize = 30;
+
+        var topics = topicService.loadTopicsByBoard(boardId, page, pageSize);
 
         JsonConverter.PacketToJsonResponse(response, topics);
 
