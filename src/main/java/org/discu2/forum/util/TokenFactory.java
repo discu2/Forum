@@ -2,6 +2,7 @@ package org.discu2.forum.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.discu2.forum.config.TokenConfig;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.service.AccountService;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 
 public class TokenFactory {
 
-    private static final int ACCESS_TOKEN_EXPIRES_TIME_MILLIS = 10*60*1000;
+    private static final TokenConfig tokenConfig = SpringContext.getBean(TokenConfig.class);
     private static final AccountService ACCOUNT_SERVICE = SpringContext.getBean(AccountService.class);
-    public static final Algorithm ALGORITHM = Algorithm.HMAC512("this is not good".getBytes());
+
+    private static int ACCESS_TOKEN_EXPIRES_TIME_MILLIS = tokenConfig.getAccess_expires_time() * 1000;
+    public static final Algorithm ALGORITHM = Algorithm.HMAC512(tokenConfig.getCrypto_key().getBytes());
 
     public static String createAccessToken(Account account, HttpServletRequest request) {
 
