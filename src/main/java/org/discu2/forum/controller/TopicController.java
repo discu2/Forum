@@ -33,11 +33,11 @@ public class TopicController {
 
     @PreAuthorize("hasPermission(#boardId, 'Board', 'access')")
     @GetMapping("/{boardId}")
-    public void getTopics(@RequestParam int page, @RequestParam(value = "page_size", required = false) int pageSize,
+    public void getTopics(@RequestParam int page, @RequestParam(value = "page_size", required = false) Integer pageSize,
                           @PathVariable("boardId") String boardId,
                           HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        if (pageSize == 0) pageSize = 30;
+        if (pageSize == null) pageSize = 30;
 
         var topics = topicService.loadTopicsByBoard(boardId, page, pageSize);
 

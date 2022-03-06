@@ -35,10 +35,10 @@ public class PostController {
 
     @PreAuthorize("hasPermission(#topicId, 'Topic', 'access')")
     @GetMapping("/{topicId}")
-    public void getPosts(@PathVariable("topicId") String topicId, @RequestParam int page, @RequestParam("page_size") int pageSize,
+    public void getPosts(@PathVariable("topicId") String topicId, @RequestParam int page, @RequestParam(value = "page_size" ,required = false) Integer pageSize,
                                  HttpServletResponse response) throws IOException {
 
-        if (pageSize == 0) pageSize = 10;
+        if (pageSize == null) pageSize = 10;
 
         var posts = postService.loadPostsByTopicId(topicId, page, pageSize);
 
