@@ -79,9 +79,10 @@ public class PostService {
         var op = postRepository.findByTopicIdAndOriginPostIsTrue(topicId);
         List<TextBlock.Post> posts = op.isPresent() ? Lists.newArrayList(op.get()) : Lists.newArrayList();
         var query = Query.query(Criteria.where("topicId").is(topicId).and("originPost").is(false))
-                .with(Sort.by("lastPostTime").ascending())
-                .skip((page - 1) * pageSize).
-                limit(pageSize);
+                //.with(Sort.by("lastPostTime").ascending())
+                .withHint("post_time_asc")
+                .skip((page - 1) * pageSize)
+                .limit(pageSize);
 
         posts.addAll(mongoTemplate.find(query, TextBlock.Post.class));
 

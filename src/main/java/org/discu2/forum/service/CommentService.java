@@ -53,7 +53,8 @@ public class CommentService {
     public List<TextBlock.Comment> loadCommentsByPostId(@NonNull String postId, int page, int pageSize) throws DataNotFoundException {
 
         var query = Query.query(Criteria.where("postId").is(postId))
-                .with(Sort.by("postTime").ascending())
+                //.with(Sort.by("postTime").ascending())
+                .withHint("post_time_asc")
                 .skip((page - 1) * pageSize).
                 limit(pageSize);
 

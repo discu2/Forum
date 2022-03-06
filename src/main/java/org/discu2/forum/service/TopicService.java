@@ -63,7 +63,6 @@ public class TopicService {
                 "",
                 now,
                 0L,
-                false,
                 0
                 );
 
@@ -79,10 +78,11 @@ public class TopicService {
 
     public List<Topic> loadPinnedTopicByBoardId(@NonNull String boardId, int page, int pageSize) {
 
-        var query = Query.query(Criteria.where("boardId").is(boardId).and("pinned").is(true))
-                .with(Sort.by("pinnedOrder").ascending())
-                .skip((page - 1) * pageSize).
-                limit(pageSize);
+        var query = Query.query(Criteria.where("boardId").is(boardId).and("pinnedOrder").gt(0))
+                //.with(Sort.by("pinnedOrder").ascending())
+                .withHint("default_desc")
+                .skip((page - 1) * pageSize)
+                .limit(pageSize);
 
         return mongoTemplate.find(query, Topic.class);
     }
@@ -94,8 +94,9 @@ public class TopicService {
     public List<Topic> loadTopicsByBoard(@NonNull String boardId, int page, int pageSize) {
 
         var topics = loadPinnedTopicByBoardId(boardId, page, pageSize);
-        var query = Query.query(Criteria.where("boardId").is(boardId).and("pinned").is(false))
-                .with(Sort.by("lastPostTime").descending())
+        var query = Query.query(Criteria.where("boardId").is(boardId).and("pinnedOrder").lte(0))
+                //.with(Sort.by("lastPostTime").descending())
+                .withHint("default_desc")
                 .skip((page - 1) * pageSize).
                 limit(pageSize- topics.size());
 

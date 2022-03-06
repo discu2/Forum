@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,6 +29,7 @@ public abstract class TextBlock {
 
 
     @Document
+    @CompoundIndex(name = "post_time_asc", def = "{ 'postTime': 1 }")
     public static class Post extends TextBlock {
 
         @Getter
@@ -47,6 +49,7 @@ public abstract class TextBlock {
     }
 
     @Document
+    @CompoundIndex(name = "post_time_asc", def = "{ 'postTime': 1 }")
     public static class Comment extends TextBlock {
 
         @Getter
