@@ -38,6 +38,8 @@ public class PostController {
     public void getPosts(@PathVariable("topicId") String topicId, @RequestParam int page, @RequestParam("page_size") int pageSize,
                                  HttpServletResponse response) throws IOException {
 
+        if (pageSize == 0) pageSize = 10;
+
         var posts = postService.loadPostsByTopicId(topicId, page, pageSize);
 
         JsonConverter.PacketToJsonResponse(response, posts);
