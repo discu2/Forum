@@ -21,7 +21,7 @@ public class CommentController {
     private CommentService commentService;
 
     @PreAuthorize("hasPermission(#postId, 'Post', 'comment')")
-    @PostMapping("/{postId}")
+    @PostMapping(value = "/{postId}", produces = "application/json")
     public void createComment(@PathVariable("postId") String postId,
                            HttpServletRequest request, HttpServletResponse response) throws IOException {
 

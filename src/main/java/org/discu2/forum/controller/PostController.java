@@ -22,7 +22,7 @@ public class PostController {
 
 
     @PreAuthorize("hasPermission(#topicId, 'Topic', 'reply')")
-    @PostMapping("/{topicId}")
+    @PostMapping(value = "/{topicId}", produces = "application/json")
     public void createReply(@PathVariable("topicId") String topicId,
                             HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -44,7 +44,7 @@ public class PostController {
     }
 
     @PreAuthorize("hasPermission(#topicId, 'Topic', 'edit')")
-    @PutMapping("/{topicId}")
+    @PutMapping(value = "/{topicId}", produces = "application/json")
     public void editPost(@PathVariable("topicId") String topicId ,HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlock.Post.class);

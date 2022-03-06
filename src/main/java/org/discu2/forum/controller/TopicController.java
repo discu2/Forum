@@ -20,7 +20,7 @@ public class TopicController {
     private final TopicService topicService;
 
     @PreAuthorize("hasPermission(#boardId, 'Board', 'post')")
-    @PostMapping("/{boardId}")
+    @PostMapping(value = "/{boardId}", produces = "application/json")
     public void createPost(@PathVariable("boardId") String boardId,
                            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
