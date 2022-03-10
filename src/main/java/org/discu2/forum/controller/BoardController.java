@@ -9,6 +9,7 @@ import org.discu2.forum.service.BoardService;
 import org.discu2.forum.util.JsonConverter;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,14 +31,14 @@ public class BoardController {
         var roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         var boards = boardService.loadAllBoards();
 
-        if (!roles.contains("ADMIN"))
-            boards.removeIf(b -> b.getPermissions().get("access").stream().anyMatch(r -> !roles.contains(r)));
+        if (!roles.contains(new SimpleGrantedAuthority("ADMIN")))
+            boards.removeIf(b -> b.getPermissions().get(Board.PERMISSION_ACCESS).stream().anyMatch(r -> !roles.contains(new SimpleGrantedAuthority(r))));
 
         JsonConverter.PacketToJsonResponse(response, boards);
 
     }
 
-    @Secured("ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(produces = "application/json")
     public void createBoard(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -49,7 +50,7 @@ public class BoardController {
 
     }
 
-    @Secured("ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{groupName}/{name}")
     public void deleteBoard(@PathVariable String groupName, @PathVariable String name,
             HttpServletRequest request, HttpServletResponse response) throws DataNotFoundException {
