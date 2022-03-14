@@ -5,13 +5,17 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
+import org.discu2.forum.packet.AccountPacket;
 import org.discu2.forum.packet.RegisterRequestPacket;
 import org.discu2.forum.packet.TokenPacket;
 import org.discu2.forum.service.AccountService;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,6 +68,26 @@ public class AccountController {
         var packet = new TokenPacket(accessToken, refreshToken);
 
         JsonConverter.PacketToJsonResponse(response, packet);
+
+    }
+
+    @GetMapping("/{nameOrId}")
+    public void getAccount(@PathVariable String nameOrId,
+                           @RequestParam(required = false, defaultValue = "name") String type,
+                           HttpServletRequest request, HttpServletResponse response) throws UsernameNotFoundException, IOException {
+
+        AccountPacket packet = null;
+        var sender = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (type.equals("name")) {
+            packet = new AccountPacket((Account) accountService.loadUserByUsername(nameOrId));
+        }
+
+        if (type.equals("id")) {
+            packet = new AccountPacket(accountService.loadUserById(nameOrId));
+        }
+
+        if (packet != null) JsonConverter.PacketToJsonResponse(response, packet);
 
     }
 

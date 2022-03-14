@@ -79,6 +79,15 @@ public class AccountService implements UserDetailsService {
         throw new UsernameNotFoundException(String.format("Username %s not found", username));
     }
 
+    public Account loadUserById(@NonNull String id) throws DataNotFoundException {
+
+        var account = getAccountById(id);
+
+        account.orElseThrow(() -> new DataNotFoundException(Account.class, "id", id));
+
+        return account.get();
+    }
+
     public Boolean isRefreshTokenUUIDValid(@NonNull UserDetails account, String uuid) {
 
         if (Strings.isNullOrEmpty(uuid)) return false;
@@ -104,6 +113,10 @@ public class AccountService implements UserDetailsService {
 
     private Optional<Account> getAccountByName(@NonNull String name) {
         return accountRepository.findAccountByUsername(name);
+    }
+
+    private Optional<Account> getAccountById(@NonNull String id) {
+        return accountRepository.findById(id);
     }
 
     private void validateUsername(String string) throws BadPacketFormatException {
