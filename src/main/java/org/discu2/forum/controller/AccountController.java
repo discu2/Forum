@@ -15,7 +15,6 @@ import org.discu2.forum.service.AccountService;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +37,11 @@ public class AccountController {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), RegisterRequestPacket.class);
 
-        accountService.registerNewAccount(packet.getUsername(), packet.getPassword(), null, packet.getMail(), null);
+        try {
+            accountService.registerNewAccount(packet.getUsername(), packet.getPassword(), null, packet.getMail(), null);
+        } catch (NullPointerException e) {
+            throw new BadPacketFormatException(e.getMessage());
+        }
 
     }
 
@@ -79,7 +82,6 @@ public class AccountController {
                            HttpServletRequest request, HttpServletResponse response) throws UsernameNotFoundException, IOException {
 
         AccountPacket packet = null;
-        var sender = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (type.equals("name")) {
             packet = new AccountPacket((Account) accountService.loadUserByUsername(nameOrId));

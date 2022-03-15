@@ -38,11 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests()
-                .antMatchers("/account/register", "/account/refresh_token").permitAll()
-                .anyRequest()
-                .authenticated();
-
         http.addFilter(jwtAuthFilter);
         http.addFilterBefore(new TokenAuthFilter(), ForumUsernamePasswordAuthenticationFilter.class);
 

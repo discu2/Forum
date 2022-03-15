@@ -72,13 +72,14 @@ public class AccountService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
-        var accountByMail = getAccountByMail(username);
-        var accountByName = getAccountByName(username);
 
-        if (accountByName.isPresent()) return accountByName.get();
-        if (accountByMail.isPresent()) return accountByMail.get();
+        var dataNotFound = new UsernameNotFoundException(String.format("Username %s not found", username));
 
-        throw new UsernameNotFoundException(String.format("Username %s not found", username));
+        if (MAIL_PATTERN.matcher(username).find()) {
+            return getAccountByMail(username).orElseThrow(() -> dataNotFound);
+        }
+
+        return getAccountByName(username).orElseThrow(() -> dataNotFound);
     }
 
     public Account loadUserById(@NonNull String id) throws DataNotFoundException {
