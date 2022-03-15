@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
-public class RegisterRequestPacket extends LoginRequestPacket{
+public class RegisterRequestPacket extends LoginRequestPacket {
 
     @Getter
     @Setter

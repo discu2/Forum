@@ -44,6 +44,7 @@ public class AccountController {
     @GetMapping("/refresh_token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws
             JWTDecodeException, UsernameNotFoundException, IOException {
+
         var authorizationHeader = request.getHeader(AUTHORIZATION);
 
         if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {

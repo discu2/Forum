@@ -1,5 +1,6 @@
 package org.discu2.forum.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.discu2.forum.repository.AccountRepository;
@@ -32,6 +33,8 @@ public class Account implements UserDetails{
 
     @Indexed(unique = true)
     private String username;
+
+    @JsonIgnore
     private String password;
     private Set<String> roleIds;
     private boolean accountNonExpired;

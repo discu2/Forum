@@ -29,7 +29,7 @@ public class BoardService {
 
         if (!board.getPermissions().containsKey(permission)) board.getPermissions().put(permission, new HashSet<>());
 
-        board.getPermissions().get(permission).add(role.getName());
+        board.getPermissions().get(permission).add(role.getId());
 
         return boardRepository.save(board);
     }
