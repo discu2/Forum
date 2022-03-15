@@ -1,24 +1,19 @@
 package org.discu2.forum.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/test")
 public class TestController {
 
-    @GetMapping("/get")
-    public Map<?,?> get(){
-        var map = new HashMap<String, Object>();
-        map.put("foo", "bar");
-        return map;
-    }
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping
+    private void testAuth(HttpServletRequest request, HttpServletResponse response) {
 
-    @GetMapping("/admin")
-    public void admin(){
-        get();
     }
 
 }

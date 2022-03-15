@@ -9,6 +9,8 @@ import org.discu2.forum.exception.AlreadyExistException;
 import org.discu2.forum.exception.BadPacketFormatException;
 import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
+import org.discu2.forum.packet.AccountPacket;
+import org.discu2.forum.packet.AccountUpdateRequestPacket;
 import org.discu2.forum.repository.AccountRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -73,8 +75,8 @@ public class AccountService implements UserDetailsService {
         var accountByMail = getAccountByMail(username);
         var accountByName = getAccountByName(username);
 
-        if (accountByMail.isPresent()) return accountByMail.get();
         if (accountByName.isPresent()) return accountByName.get();
+        if (accountByMail.isPresent()) return accountByMail.get();
 
         throw new UsernameNotFoundException(String.format("Username %s not found", username));
     }
@@ -86,6 +88,16 @@ public class AccountService implements UserDetailsService {
         account.orElseThrow(() -> new DataNotFoundException(Account.class, "id", id));
 
         return account.get();
+    }
+
+    public Account editAccount(@NonNull String username ,@NonNull AccountUpdateRequestPacket packet)
+            throws UsernameNotFoundException, IllegalArgumentException {
+
+        var account = (Account) loadUserByUsername(username);
+
+        if (!Strings.isNullOrEmpty(packet.getNickname())) account.setNickname(packet.getNickname());
+
+        return accountRepository.save(account);
     }
 
     public Boolean isRefreshTokenUUIDValid(@NonNull UserDetails account, String uuid) {

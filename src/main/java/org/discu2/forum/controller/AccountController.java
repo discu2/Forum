@@ -5,17 +5,18 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.discu2.forum.exception.DataNotFoundException;
+import org.discu2.forum.exception.BadPacketFormatException;
 import org.discu2.forum.model.Account;
 import org.discu2.forum.packet.AccountPacket;
+import org.discu2.forum.packet.AccountUpdateRequestPacket;
 import org.discu2.forum.packet.RegisterRequestPacket;
 import org.discu2.forum.packet.TokenPacket;
 import org.discu2.forum.service.AccountService;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,17 +93,14 @@ public class AccountController {
 
     }
 
-//    @PreAuthorize("(authentication.name == #username) and hasAuthority('account_self')")
-//    @PutMapping(value = "/{username}/edit", produces = "application/json")
-//    public void editAccount(@PathVariable("username") String username, HttpServletRequest request)
-//            throws UsernameNotFoundException, IOException {
-//
-//        var packet = JsonConverter.requestToPacket(request.getInputStream(), AccountUpdateRequestPacket.class);
-//        var account = ((Account.UserDetailImpl)accountService.loadUserByUsername(username)).account;
-//
-//        account.setNickname(packet.getNickname());
-//        accountRepository.save(account);
-//
-//    }
+    @PreAuthorize("authentication.name == #username or hasAuthority('ADMIN')")
+    @PutMapping(value = "/{username}", produces = "application/json")
+    public void editAccount(@PathVariable("username") String username, HttpServletRequest request)
+            throws IOException, UsernameNotFoundException, IllegalArgumentException {
+
+        var packet = JsonConverter.requestToPacket(request.getInputStream(), AccountUpdateRequestPacket.class);
+
+        accountService.editAccount(username, packet);
+    }
 
 }
