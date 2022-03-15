@@ -38,7 +38,7 @@ public class ForumPermissionService implements PermissionEvaluator {
         if ((authentication == null) || (targetId == null) || (targetType == null) || !(permission instanceof String))
             return false;
 
-        if (authentication.getAuthorities().contains("ADMIN")) return true;
+        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) return true;
 
         switch (targetType) {
 
