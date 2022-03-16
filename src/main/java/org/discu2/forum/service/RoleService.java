@@ -30,4 +30,8 @@ public class RoleService {
     public Role loadRoleByName(@NonNull String name) throws DataNotFoundException {
         return roleRepository.findByName(name.toUpperCase()).orElseThrow(() -> new DataNotFoundException(Role.class, "name", name));
     }
+
+    public Role loadRoleById(@NonNull String id) throws DataNotFoundException {
+        return roleRepository.findById(id).orElseThrow(() -> new DataNotFoundException(Role.class, "id", id));
+    }
 }

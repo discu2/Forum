@@ -10,7 +10,6 @@ import org.discu2.forum.service.AccountService;
 import org.discu2.forum.service.BoardService;
 import org.discu2.forum.service.RoleService;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,6 +25,12 @@ public class DatabaseSetup {
     public void initDefaults() throws AlreadyExistException, DataNotFoundException, BadPacketFormatException {
 
         Role adminRole;
+
+        try {
+            roleService.loadRoleByName("ROLE_ANONYMOUS");
+        } catch (Exception e) {
+            roleService.createNewRole("ROLE_ANONYMOUS");
+        }
 
         try {
             roleService.loadRoleByName("DEFAULT");

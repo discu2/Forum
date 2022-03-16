@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static org.discu2.forum.model.Board.BASIC_PERMISSIONS;
-import static org.discu2.forum.model.Board.PERMISSIONS;
+import static org.discu2.forum.model.Board.*;
 
 @Service
 @AllArgsConstructor
@@ -48,13 +47,17 @@ public class BoardService {
 
         if (roleNames.length == 0) {
 
+            addPermissions(groupName, name, PERMISSION_ACCESS, "ROLE_ANONYMOUS");
             for (var p : BASIC_PERMISSIONS)
                 addPermissions(groupName, name, p, "DEFAULT");
 
         } else {
 
             for (var p : BASIC_PERMISSIONS)
-                for (var roleName : roleNames) addPermissions(groupName, name, p, roleName);
+                for (var roleName : roleNames) {
+                    if (roleName == "ROLE_ANONYMOUS" && !p.equals(PERMISSION_ACCESS)) continue;
+                    addPermissions(groupName, name, p, roleName);
+                }
 
         }
 

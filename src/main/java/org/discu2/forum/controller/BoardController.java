@@ -1,13 +1,12 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Board;
 import org.discu2.forum.packet.CreateBoardRequestPacket;
 import org.discu2.forum.service.BoardService;
+import org.discu2.forum.service.RoleService;
 import org.discu2.forum.util.JsonConverter;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +22,7 @@ import java.io.IOException;
 public class BoardController {
 
     private final BoardService boardService;
+    private final RoleService roleService;
 
     @PreAuthorize("permitAll()")
     @GetMapping
@@ -32,7 +32,15 @@ public class BoardController {
         var boards = boardService.loadAllBoards();
 
         if (!roles.contains(new SimpleGrantedAuthority("ADMIN")))
-            boards.removeIf(b -> b.getPermissions().get(Board.PERMISSION_ACCESS).stream().anyMatch(r -> !roles.contains(new SimpleGrantedAuthority(r))));
+
+            boards.removeIf(b -> !b.getPermissions().get(Board.PERMISSION_ACCESS).stream().anyMatch(roleId -> {
+                try {
+                    var roleName = roleService.loadRoleById(roleId).getName();
+                    return roles.contains(new SimpleGrantedAuthority(roleName));
+                } catch (Exception e) {
+                    return false;
+                }
+            }));
 
         JsonConverter.PacketToJsonResponse(response, boards);
 
