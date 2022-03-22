@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static org.discu2.forum.model.Account.MAX_REFRESH_TOKENS;
@@ -31,6 +32,7 @@ public class AccountService implements UserDetailsService {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
+    private static final Set<String> BLACK_LIST_USERNAMES = Sets.newHashSet("login", "refresh_token", "register");
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Z0-9._].{4,16}$", Pattern.CASE_INSENSITIVE);
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[A-Z])(?=\\S+$).{8,64}$", Pattern.CASE_INSENSITIVE);
     private static final Pattern MAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -46,6 +48,8 @@ public class AccountService implements UserDetailsService {
         validateUsername(username);
         validatePassword(password);
         validateMail(mail);
+
+        if (BLACK_LIST_USERNAMES.contains(username)) throw new AlreadyExistException(Account.class);
 
         var account = new Account(
                 null,
