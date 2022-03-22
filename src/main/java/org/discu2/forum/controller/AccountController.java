@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -97,12 +98,26 @@ public class AccountController {
 
     @PreAuthorize("authentication.name == #username or hasAuthority('ADMIN')")
     @PutMapping(value = "/{username}", produces = "application/json")
-    public void editAccount(@PathVariable("username") String username, HttpServletRequest request)
+    public void editAccount(@PathVariable("username") String username, HttpServletRequest request, HttpServletResponse response)
             throws IOException, UsernameNotFoundException, IllegalArgumentException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), AccountUpdateRequestPacket.class);
 
         accountService.editAccount(username, packet);
+    }
+
+    @PreAuthorize("authentication.name == #username or hasAuthority('ADMIN')")
+    @PostMapping(value = "/{username}/profile_pic", produces = "multipart/form-data")
+    public void uploadProfilePicture(@PathVariable String username, HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        accountService.addProfilePicture(username, request.getPart("Image"));
+    }
+
+    @GetMapping(value = "/{username}/profile_pic")
+    public void getProfilePicture(@PathVariable String username, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        accountService.loadProfilePicture(username, response);
     }
 
 }
