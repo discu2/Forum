@@ -1,6 +1,7 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
+import org.discu2.forum.exception.BadPacketFormatException;
 import org.discu2.forum.packet.TextBlockRequestPacket;
 import org.discu2.forum.service.TopicService;
 import org.discu2.forum.util.JsonConverter;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Null;
 import java.io.IOException;
 
 @RestController
@@ -27,7 +29,11 @@ public class TopicController {
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.Post.class);
         var username = request.getUserPrincipal().getName();
 
-        topicService.createNewTopicWithPost(boardId, username, packet.getTitle(), packet.getContent());
+        try {
+            topicService.createNewTopicWithPost(boardId, username, packet.getTitle(), packet.getContent());
+        } catch (NullPointerException e) {
+            throw new BadPacketFormatException(e.getMessage());
+        }
 
     }
 

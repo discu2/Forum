@@ -1,6 +1,7 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
+import org.discu2.forum.exception.BadPacketFormatException;
 import org.discu2.forum.model.TextBlock;
 import org.discu2.forum.packet.TextBlockRequestPacket;
 import org.discu2.forum.service.PostService;
@@ -29,7 +30,11 @@ public class PostController {
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.Post.class);
         var username = request.getUserPrincipal().getName();
 
-        postService.createNewPost(topicId, username, packet.getContent(), false);
+        try {
+            postService.createNewPost(topicId, username, packet.getContent(), false);
+        } catch (NullPointerException e) {
+            throw new BadPacketFormatException(e.getMessage());
+        }
 
     }
 
