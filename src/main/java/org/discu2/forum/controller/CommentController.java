@@ -1,6 +1,7 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
+import org.discu2.forum.exception.BadPacketFormatException;
 import org.discu2.forum.packet.TextBlockRequestPacket;
 import org.discu2.forum.service.CommentService;
 import org.discu2.forum.util.JsonConverter;
@@ -28,7 +29,11 @@ public class CommentController {
         var packet = JsonConverter.requestToPacket(request.getInputStream(), TextBlockRequestPacket.class);
         var username = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        commentService.createNewComment(postId, username, packet.getContent());
+        try {
+            commentService.createNewComment(postId, username, packet.getContent());
+        } catch (NullPointerException e) {
+            throw new BadPacketFormatException(e.getMessage());
+        }
 
     }
 

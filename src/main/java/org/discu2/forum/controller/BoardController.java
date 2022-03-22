@@ -1,6 +1,7 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
+import org.discu2.forum.exception.BadPacketFormatException;
 import org.discu2.forum.exception.DataNotFoundException;
 import org.discu2.forum.model.Board;
 import org.discu2.forum.packet.CreateBoardRequestPacket;
@@ -50,8 +51,14 @@ public class BoardController {
     @PostMapping(produces = "application/json")
     public void createBoard(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        Board board;
         var packet = JsonConverter.requestToPacket(request.getInputStream(), CreateBoardRequestPacket.class);
-        var board = boardService.createNewBoard(packet.getGroupName(), packet.getName(), packet.getBasicPermissionRoles());
+
+        try {
+            board = boardService.createNewBoard(packet.getGroupName(), packet.getName(), packet.getBasicPermissionRoles());
+        } catch (NullPointerException e) {
+            throw new BadPacketFormatException(e.getMessage());
+        }
 
         for (var m : packet.getModeratorRoles())
             boardService.addPermissions(board.getGroupName(), board.getName(), Board.PERMISSION_MODERATOR, m);
