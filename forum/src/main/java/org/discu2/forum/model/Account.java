@@ -19,36 +19,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Data
-@AllArgsConstructor
 @Document
-public class Account implements UserDetails{
+public class Account extends org.discu2.forum.api.model.Account {
 
-    public static final int MAX_REFRESH_TOKENS = 6;
     private static final RoleRepository roleRepository = SpringContext.getBean(RoleRepository.class);
     private static final AccountRepository accountRepository = SpringContext.getBean(AccountRepository.class);
 
-    @Id
-    private String id;
-
-    @Indexed(unique = true)
-    private String username;
-
-    @JsonIgnore
-    private String password;
-    private Set<String> roleIds;
-    private boolean accountNonExpired;
-    private boolean accountNonLocked;
-    private boolean credentialsNonExpired;
-    private boolean enabled;
-
-    @Indexed(unique = true)
-    private String mail;
-    private boolean mailVerify;
-
-    private List<String> refreshTokenUUIDs;
-
-    private String nickname;
+    public Account(String id, String username, String password, Set<String> roleIds, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled, String mail, boolean mailVerify, List<String> refreshTokenUUIDs, String nickname) {
+        super(id, username, password, roleIds, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, mail, mailVerify, refreshTokenUUIDs, nickname);
+    }
 
 
     @Override
@@ -57,11 +36,11 @@ public class Account implements UserDetails{
         var authorities = new HashSet<SimpleGrantedAuthority>();
         AtomicBoolean dirty = new AtomicBoolean(false);
 
-        for (var id : roleIds){
+        for (var id : super.getRoleIds()){
             var role = roleRepository.findById(id);
 
             role.ifPresentOrElse(r -> authorities.add(r.getGrantedAuthorities()), () -> {
-                roleIds.remove(id);
+                super.getRoleIds().remove(id);
                 dirty.set(true);
             });
         }
@@ -71,80 +50,4 @@ public class Account implements UserDetails{
         return authorities;
 
     }
-
-//    public UserDetails getUserDetails() {
-//        return new UserDetailImpl(this);
-//    }
-//
-//
-//    public static class UserDetailImpl implements UserDetails {
-//
-//        private static RoleRepository roleRepository = SpringContext.getBean(RoleRepository.class);
-//        private static AccountRepository accountRepository = SpringContext.getBean(AccountRepository.class);
-//
-//        public final Account account;
-//
-//        public UserDetailImpl(Account account) {
-//            this.account = account;
-//        }
-//
-//        @Override
-//        public Collection<? extends GrantedAuthority> getAuthorities() {
-//
-//            var authorities = new HashSet<SimpleGrantedAuthority>();
-//            AtomicBoolean dirty = new AtomicBoolean(false);
-//
-//            for (var id : account.getRoleIds()){
-//                var role = roleRepository.findById(id);
-//
-//                role.ifPresentOrElse(r -> authorities.add(r.getGrantedAuthorities()), () -> {
-//                    account.getRoleIds().remove(id);
-//                    dirty.set(true);
-//                });
-//            }
-//
-//            if (dirty.get()) accountRepository.save(account);
-//
-//            return authorities;
-//
-//        }
-//
-//        public String getId() {
-//            return account.getId();
-//        }
-//
-//        public List<String> getRefreshTokens() {
-//            return account.getRefreshTokenUUIDs();
-//        }
-//
-//        @Override
-//        public String getPassword() {
-//            return account.getPassword();
-//        }
-//
-//        @Override
-//        public String getUsername() {
-//            return account.getUsername();
-//        }
-//
-//        @Override
-//        public boolean isAccountNonExpired() {
-//            return account.isAccountNonExpired();
-//        }
-//
-//        @Override
-//        public boolean isAccountNonLocked() {
-//            return account.isAccountNonLocked();
-//        }
-//
-//        @Override
-//        public boolean isCredentialsNonExpired() {
-//            return account.isCredentialsNonExpired();
-//        }
-//
-//        @Override
-//        public boolean isEnabled() {
-//            return account.isEnabled();
-//        }
-//    }
 }

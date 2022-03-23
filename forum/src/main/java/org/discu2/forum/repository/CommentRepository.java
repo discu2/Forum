@@ -1,6 +1,6 @@
 package org.discu2.forum.repository;
 
-import org.discu2.forum.model.TextBlock;
+import org.discu2.forum.api.model.TextBlock;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

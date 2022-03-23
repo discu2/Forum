@@ -1,14 +1,14 @@
-package org.discu2.forum.model;
+package org.discu2.forum.api.model;
 
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.discu2.forum.repository.RoleRepository;
-import org.discu2.forum.util.SpringContext;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -24,8 +24,6 @@ public class Board {
 
     public static final List<String> PERMISSIONS = Lists.newArrayList(PERMISSION_ACCESS, PERMISSION_POST, PERMISSION_REPLY, PERMISSION_COMMENT, PERMISSION_EDIT, PERMISSION_MODERATOR);
     public static final List<String> BASIC_PERMISSIONS = Lists.newArrayList(PERMISSION_ACCESS, PERMISSION_POST, PERMISSION_REPLY, PERMISSION_COMMENT, PERMISSION_EDIT);
-
-    private static RoleRepository roleRepository = SpringContext.getBean(RoleRepository.class);
 
     @Id
     private String id;

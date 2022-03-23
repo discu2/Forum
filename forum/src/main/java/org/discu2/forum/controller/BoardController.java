@@ -1,10 +1,10 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.exception.BadPacketFormatException;
-import org.discu2.forum.exception.DataNotFoundException;
-import org.discu2.forum.model.Board;
-import org.discu2.forum.packet.CreateBoardRequestPacket;
+import org.discu2.forum.api.model.Board;
+import org.discu2.forum.api.exception.BadPacketFormatException;
+import org.discu2.forum.api.exception.DataNotFoundException;
+import org.discu2.forum.api.packet.CreateBoardRequestPacket;
 import org.discu2.forum.service.BoardService;
 import org.discu2.forum.service.RoleService;
 import org.discu2.forum.util.JsonConverter;

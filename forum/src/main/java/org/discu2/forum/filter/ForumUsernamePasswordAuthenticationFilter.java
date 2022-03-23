@@ -2,9 +2,9 @@ package org.discu2.forum.filter;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.model.Account;
-import org.discu2.forum.packet.ErrorMessagePacket;
-import org.discu2.forum.packet.LoginRequestPacket;
-import org.discu2.forum.packet.TokenPacket;
+import org.discu2.forum.api.packet.ErrorMessagePacket;
+import org.discu2.forum.api.packet.LoginRequestPacket;
+import org.discu2.forum.api.packet.TokenPacket;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
 import org.springframework.http.HttpStatus;

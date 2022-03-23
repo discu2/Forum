@@ -1,4 +1,4 @@
-package org.discu2.forum.model;
+package org.discu2.forum.api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

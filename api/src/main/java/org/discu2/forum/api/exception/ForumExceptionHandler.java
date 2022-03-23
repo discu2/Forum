@@ -1,8 +1,8 @@
-package org.discu2.forum.exception;
+package org.discu2.forum.api.exception;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import org.discu2.forum.packet.ErrorMessagePacket;
+import org.discu2.forum.api.packet.ErrorMessagePacket;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

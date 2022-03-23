@@ -1,10 +1,10 @@
 package org.discu2.forum.setup;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.exception.AlreadyExistException;
-import org.discu2.forum.exception.BadPacketFormatException;
-import org.discu2.forum.exception.DataNotFoundException;
-import org.discu2.forum.model.Role;
+import org.discu2.forum.api.model.Role;
+import org.discu2.forum.api.exception.AlreadyExistException;
+import org.discu2.forum.api.exception.BadPacketFormatException;
+import org.discu2.forum.api.exception.DataNotFoundException;
 import org.discu2.forum.repository.BoardRepository;
 import org.discu2.forum.service.AccountService;
 import org.discu2.forum.service.BoardService;

@@ -1,4 +1,4 @@
-package org.discu2.forum.exception;
+package org.discu2.forum.api.exception;
 
 import java.io.IOException;
 

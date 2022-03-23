@@ -1,14 +1,13 @@
 package org.discu2.forum.service;
 
 import lombok.NonNull;
-import org.discu2.forum.exception.DataNotFoundException;
+import org.discu2.forum.api.model.TextBlock;
+import org.discu2.forum.api.model.Topic;
+import org.discu2.forum.api.exception.DataNotFoundException;
 import org.discu2.forum.model.Account;
-import org.discu2.forum.model.TextBlock;
-import org.discu2.forum.model.Topic;
 import org.discu2.forum.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

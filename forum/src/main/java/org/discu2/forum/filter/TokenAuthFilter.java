@@ -2,7 +2,7 @@ package org.discu2.forum.filter;
 
 import com.auth0.jwt.JWT;
 import com.google.common.base.Strings;
-import org.discu2.forum.packet.ErrorMessagePacket;
+import org.discu2.forum.api.packet.ErrorMessagePacket;
 import org.discu2.forum.util.JsonConverter;
 import org.discu2.forum.util.TokenFactory;
 import org.springframework.http.HttpStatus;

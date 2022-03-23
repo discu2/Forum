@@ -1,7 +1,7 @@
-package org.discu2.forum.packet;
+package org.discu2.forum.api.packet;
 
 import lombok.Data;
-import org.discu2.forum.model.Account;
+import org.discu2.forum.api.model.Account;
 
 import java.util.ArrayList;
 import java.util.List;

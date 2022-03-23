@@ -1,17 +1,15 @@
 package org.discu2.forum.controller;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.exception.BadPacketFormatException;
-import org.discu2.forum.packet.TextBlockRequestPacket;
+import org.discu2.forum.api.exception.BadPacketFormatException;
+import org.discu2.forum.api.packet.TextBlockRequestPacket;
 import org.discu2.forum.service.TopicService;
 import org.discu2.forum.util.JsonConverter;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Null;
 import java.io.IOException;
 
 @RestController

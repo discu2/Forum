@@ -1,7 +1,7 @@
 package org.discu2.forum.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.discu2.forum.exception.BadPacketFormatException;
+import org.discu2.forum.api.exception.BadPacketFormatException;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
