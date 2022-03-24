@@ -18,6 +18,6 @@ public class Role {
     private String name;
 
     public SimpleGrantedAuthority getGrantedAuthorities() {
-        return new SimpleGrantedAuthority(name);
+        return new SimpleGrantedAuthority("ROLE_" + id);
     }
 }

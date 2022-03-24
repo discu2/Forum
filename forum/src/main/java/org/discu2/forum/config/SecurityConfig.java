@@ -1,9 +1,11 @@
 package org.discu2.forum.config;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import lombok.AllArgsConstructor;
-import org.discu2.forum.filter.ForumUsernamePasswordAuthenticationFilter;
-import org.discu2.forum.filter.TokenAuthFilter;
-import org.discu2.forum.service.AccountService;
+import lombok.Data;
+import org.discu2.forum.api.filter.TokenAuthFilter;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,40 +14,32 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
+
+
+@Data
+@Validated
 @Configuration
+@ConfigurationProperties(prefix = "forum.auth")
 @EnableWebSecurity
-@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final PasswordEncoder passwordEncoder;
-    private final AccountService accountService;
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountService).passwordEncoder(passwordEncoder);
-    }
+    @NotNull
+    @Length(min = 32)
+    private String crypto_key;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        var jwtAuthFilter = new ForumUsernamePasswordAuthenticationFilter(authenticationManagerBean());
-        jwtAuthFilter.setFilterProcessesUrl("/account/login");
 
         http.csrf().disable();
-                //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilter(jwtAuthFilter);
-        http.addFilterBefore(new TokenAuthFilter(), ForumUsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new TokenAuthFilter(Algorithm.HMAC512(crypto_key.getBytes())), UsernamePasswordAuthenticationFilter.class);
 
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
     }
 }

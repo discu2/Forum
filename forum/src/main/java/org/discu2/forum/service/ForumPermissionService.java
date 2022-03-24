@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @AllArgsConstructor
@@ -17,7 +16,6 @@ public class ForumPermissionService implements PermissionEvaluator {
     private final PostRepository postRepository;
     private final TopicRepository topicRepository;
     private final BoardRepository boardRepository;
-    private final RoleRepository roleRepository;
     private final CommentRepository commentRepository;
 
 
@@ -25,7 +23,7 @@ public class ForumPermissionService implements PermissionEvaluator {
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         if ((authentication == null) || (targetDomainObject == null) || !(permission instanceof String)) return false;
 
-        if (authentication.getAuthorities().contains("ADMIN")) return true;
+        if (authentication.getAuthorities().contains("ROLE_ADMIN")) return true;
 
         return hasPermission(authentication, targetDomainObject.toString(), targetDomainObject.getClass().toString(), permission);
     }
@@ -38,7 +36,7 @@ public class ForumPermissionService implements PermissionEvaluator {
         if ((authentication == null) || (targetId == null) || (targetType == null) || !(permission instanceof String))
             return false;
 
-        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) return true;
+        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) return true;
 
         switch (targetType) {
 
@@ -68,16 +66,15 @@ public class ForumPermissionService implements PermissionEvaluator {
     private boolean hasBoardPermission(Authentication auth, String boardId, String permission) {
 
         var board = boardRepository.findById(boardId);
-        var result = new AtomicBoolean(false);
 
         if (board.isEmpty()) return false;
 
         for (var a : auth.getAuthorities()) {
-            var role = roleRepository.findByName(a.getAuthority());
-            role.ifPresent(r -> result.set(board.get().getPermissions().get(permission).contains(r.getId())));
+            if (board.get().getPermissions().get(permission).contains(a.getAuthority().substring(5)))
+                return true;
         }
 
-        return result.get();
+        return false;
     }
 
     private boolean hasTopicPermission(Authentication auth, String topicId, String permission) {

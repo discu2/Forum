@@ -5,7 +5,7 @@ import org.discu2.forum.api.model.TextBlock;
 import org.discu2.forum.api.exception.BadPacketFormatException;
 import org.discu2.forum.api.packet.TextBlockRequestPacket;
 import org.discu2.forum.service.PostService;
-import org.discu2.forum.util.JsonConverter;
+import org.discu2.forum.api.util.JsonConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

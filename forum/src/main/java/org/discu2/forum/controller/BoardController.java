@@ -6,8 +6,7 @@ import org.discu2.forum.api.exception.BadPacketFormatException;
 import org.discu2.forum.api.exception.DataNotFoundException;
 import org.discu2.forum.api.packet.CreateBoardRequestPacket;
 import org.discu2.forum.service.BoardService;
-import org.discu2.forum.service.RoleService;
-import org.discu2.forum.util.JsonConverter;
+import org.discu2.forum.api.util.JsonConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +22,7 @@ import java.io.IOException;
 public class BoardController {
 
     private final BoardService boardService;
-    private final RoleService roleService;
+    //private final RoleService roleService;
 
     @PreAuthorize("permitAll()")
     @GetMapping
@@ -36,8 +35,8 @@ public class BoardController {
 
             boards.removeIf(b -> !b.getPermissions().get(Board.PERMISSION_ACCESS).stream().anyMatch(roleId -> {
                 try {
-                    var roleName = roleService.loadRoleById(roleId).getName();
-                    return roles.contains(new SimpleGrantedAuthority(roleName));
+                    //var roleName = roleService.loadRoleById(roleId).getName();
+                    return roles.contains(new SimpleGrantedAuthority("ROLE_" + roleId));
                 } catch (Exception e) {
                     return false;
                 }

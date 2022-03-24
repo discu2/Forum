@@ -1,6 +1,6 @@
 rootProject.name = 'Forum'
 
 include 'forum'
-//include 'account'
+include 'account'
 include 'api'
 

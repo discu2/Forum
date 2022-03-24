@@ -16,10 +16,8 @@ public class Topic {
     private String id;
 
     private String boardId;
-    private String ownerId;
-    private String username;
+    private String ownerUsername;
     private String title;
-    private String lastPosterId;
     private String lastPosterUsername;
 
     private Long createTime;

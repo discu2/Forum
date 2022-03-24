@@ -4,7 +4,6 @@ import lombok.NonNull;
 import org.discu2.forum.api.model.TextBlock;
 import org.discu2.forum.api.model.Topic;
 import org.discu2.forum.api.exception.DataNotFoundException;
-import org.discu2.forum.model.Account;
 import org.discu2.forum.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -26,13 +25,11 @@ public class TopicService {
     @Lazy
     private PostService postService;
     private final MongoTemplate mongoTemplate;
-    private final AccountService accountService;
     private final BoardService boardService;
 
-    public TopicService(TopicRepository topicRepository, MongoTemplate mongoTemplate, AccountService accountService, BoardService boardService) {
+    public TopicService(TopicRepository topicRepository, MongoTemplate mongoTemplate, BoardService boardService) {
         this.topicRepository = topicRepository;
         this.mongoTemplate = mongoTemplate;
-        this.accountService = accountService;
         this.boardService = boardService;
     }
 
@@ -41,24 +38,20 @@ public class TopicService {
                                                  @NonNull String title,
                                                  @NonNull String content) throws UsernameNotFoundException, DataNotFoundException {
 
-        var accountId = ((Account) accountService.loadUserByUsername(username)).getId();
-        var topic = createNewTopic(boardId, accountId, username, title);
+        var topic = createNewTopic(boardId, username, title);
 
-        return postService.createNewPost(topicRepository.save(topic).getId(), accountId, username, content, true);
+        return postService.createNewPost(topicRepository.save(topic).getId(), username, content, true);
     }
 
     private Topic createNewTopic(@NonNull String boardId,
-                                 @NonNull String accountId,
                                  @NonNull String username,
                                  @NonNull String title) throws UsernameNotFoundException {
 
         var now = new Date().getTime();
         var topic = new Topic(null,
                 boardId,
-                accountId,
                 username,
                 title,
-                "",
                 "",
                 now,
                 0L,
@@ -108,9 +101,8 @@ public class TopicService {
         return topicRepository.findById(id).orElseThrow(() -> new DataNotFoundException(Topic.class, "id", id));
     }
 
-    public Topic updateLastPoster(Topic topic, @NonNull String accountId, @NonNull String username, long time) {
+    public Topic updateLastPoster(Topic topic, @NonNull String username, long time) {
 
-        topic.setLastPosterId(accountId);
         topic.setLastPosterUsername(username);
         topic.setLastPostTime(time);
 

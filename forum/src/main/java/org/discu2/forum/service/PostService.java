@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.discu2.forum.api.model.TextBlock;
 import org.discu2.forum.api.exception.DataNotFoundException;
-import org.discu2.forum.model.Account;
 import org.discu2.forum.repository.PostRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,21 +24,10 @@ public class PostService {
 
     @Lazy
     private TopicService topicService;
-    private final AccountService accountService;
     private final MongoTemplate mongoTemplate;
 
-    public TextBlock.Post createNewPost(@NonNull String topicId,
-                                        @NonNull String username,
-                                        @NonNull String content,
-                                        Boolean isOriginPost) throws UsernameNotFoundException, DataNotFoundException {
-
-        var accountId = (Account) accountService.loadUserByUsername(username);
-
-        return createNewPost(topicId, accountId.getId(), username, content, isOriginPost);
-    }
 
     public TextBlock.Post createNewPost(@NonNull String topicId,
-                                        @NonNull String accountId,
                                         @NonNull String username,
                                         @NonNull String content,
                                         Boolean isOriginPost) throws UsernameNotFoundException, DataNotFoundException {
@@ -49,7 +37,6 @@ public class PostService {
         var post = new TextBlock.Post(
                 null,
                 topicId,
-                accountId,
                 username,
                 now,
                 now,
@@ -58,7 +45,7 @@ public class PostService {
                 Lists.newArrayList(),
                 Lists.newArrayList());
 
-        topicService.updateLastPoster(topic, accountId, username, now);
+        topicService.updateLastPoster(topic, username, now);
 
         return postRepository.save(post);
     }

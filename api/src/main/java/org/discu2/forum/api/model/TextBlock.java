@@ -18,14 +18,13 @@ public abstract class TextBlock {
     @Id
     private String id;
 
-    private String ownerId;
-    private String username;
+    private String ownerUsername;
 
     private Long postTime;
     private Long lastEditTime;
     private String content;
-    private List<String> likeUserIds;
-    private List<String> dislikeUserIds;
+    private List<String> likeUsers;
+    private List<String> dislikeUsers;
 
 
     @Document
@@ -41,8 +40,8 @@ public abstract class TextBlock {
         @Setter
         private Boolean originPost;
 
-        public Post(String id, String topicId, String ownerId, String username, Long postTime, Long lastEditTime, String content, Boolean originPost, List<String> likeUserIds, List<String> dislikeUserIds) {
-            super(id, ownerId, username, postTime, lastEditTime, content, likeUserIds, dislikeUserIds);
+        public Post(String id, String topicId, String ownerUsername, Long postTime, Long lastEditTime, String content, Boolean originPost, List<String> likeUsers, List<String> dislikeUsers) {
+            super(id, ownerUsername, postTime, lastEditTime, content, likeUsers, dislikeUsers);
             this.originPost = originPost;
             this.topicId = topicId;
         }
@@ -56,8 +55,8 @@ public abstract class TextBlock {
         @Setter
         private String postId;
 
-        public Comment(String id, String postId, String ownerId, String username, Long postTime, Long lastEditTime, String content, List<String> likeUserIds, List<String> dislikeUserIds) {
-            super(id, ownerId, username, postTime, lastEditTime, content, likeUserIds, dislikeUserIds);
+        public Comment(String id, String postId, String ownerUsername, Long postTime, Long lastEditTime, String content, List<String> likeUsers, List<String> dislikeUsers) {
+            super(id, ownerUsername, postTime, lastEditTime, content, likeUsers, dislikeUsers);
             this.postId = postId;
         }
     }

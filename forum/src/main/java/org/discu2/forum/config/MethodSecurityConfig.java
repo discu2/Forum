@@ -13,13 +13,13 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 
-    private ForumPermissionService forumPermissionEvaluator;
+    private ForumPermissionService forumPermissionService;
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
 
         var expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setPermissionEvaluator(forumPermissionEvaluator);
+        expressionHandler.setPermissionEvaluator(forumPermissionService);
 
         return expressionHandler;
     }

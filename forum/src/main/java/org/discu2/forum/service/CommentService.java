@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.discu2.forum.api.model.TextBlock;
 import org.discu2.forum.api.exception.DataNotFoundException;
-import org.discu2.forum.model.Account;
 import org.discu2.forum.repository.CommentRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,7 +19,6 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final AccountService accountService;
     private final PostService postService;
     private final MongoTemplate mongoTemplate;
 
@@ -28,17 +26,15 @@ public class CommentService {
     public TextBlock.Comment createNewComment(@NonNull String postId,
                                               @NonNull String username,
                                               @NonNull String content) throws DataNotFoundException {
-
-        // Make sure mater is existed
+        
+        // Make sure master is existed
         postService.loadById(postId);
 
-        var accountId = ((Account) accountService.loadUserByUsername(username)).getId();
         var now = new Date().getTime();
 
         var post = new TextBlock.Comment(
                 null,
                 postId,
-                accountId,
                 username,
                 now,
                 now,

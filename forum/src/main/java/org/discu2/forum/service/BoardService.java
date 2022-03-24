@@ -17,18 +17,19 @@ import static org.discu2.forum.api.model.Board.*;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final RoleService roleService;
+    //private final RoleService roleService;
 
-    public Board addPermissions(@NonNull String boardGroupName, @NonNull String boardName, @NonNull String permission, @NonNull String roleName)
+    public Board addPermissions(@NonNull String boardGroupName, @NonNull String boardName, @NonNull String permission, @NonNull String roleId)
             throws DataNotFoundException {
 
         if (!PERMISSIONS.contains(permission)) throw new DataNotFoundException("PERMISSION", "name", permission);
-        var role = roleService.loadRoleByName(roleName);
+        //var role = roleService.loadRoleByName(roleName);
+        //need check role is present
         var board = loadBoardByGroupNameAndName(boardGroupName, boardName);
 
         if (!board.getPermissions().containsKey(permission)) board.getPermissions().put(permission, new HashSet<>());
 
-        board.getPermissions().get(permission).add(role.getId());
+        board.getPermissions().get(permission).add(roleId);
 
         return boardRepository.save(board);
     }
@@ -37,25 +38,25 @@ public class BoardService {
      *
      * @param name - board name
      * @param groupName
-     * @param roleNames - leave this empty will auto init the role with DEFAULT
+     * @param roleIds - leave this empty will auto init with DEFAULT role
      * @return - a new board with the permissions
      */
-    public Board createNewBoard(@NonNull String groupName, @NonNull String name, String... roleNames) throws DataNotFoundException, AlreadyExistException {
+    public Board createNewBoard(@NonNull String groupName, @NonNull String name, String... roleIds) throws DataNotFoundException, AlreadyExistException {
 
         if (boardRepository.findByGroupNameAndAndName(groupName, name).isPresent()) throw new AlreadyExistException(Board.class);
         var board = boardRepository.save(new Board(null, name, groupName, new HashMap<>()));
 
-        if (roleNames.length == 0) {
+        if (roleIds == null || roleIds.length == 0) {
 
-            addPermissions(groupName, name, PERMISSION_ACCESS, "ROLE_ANONYMOUS");
+            addPermissions(groupName, name, PERMISSION_ACCESS, "ANONYMOUS");
             for (var p : BASIC_PERMISSIONS)
                 addPermissions(groupName, name, p, "DEFAULT");
 
         } else {
 
             for (var p : BASIC_PERMISSIONS)
-                for (var roleName : roleNames) {
-                    if (roleName == "ROLE_ANONYMOUS" && !p.equals(PERMISSION_ACCESS)) continue;
+                for (var roleName : roleIds) {
+                    if (roleName == "ANONYMOUS" && !p.equals(PERMISSION_ACCESS)) continue;
                     addPermissions(groupName, name, p, roleName);
                 }
 
