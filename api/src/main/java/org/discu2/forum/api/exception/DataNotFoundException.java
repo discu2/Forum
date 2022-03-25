@@ -9,6 +9,6 @@ public class DataNotFoundException extends IOException {
     }
 
     public DataNotFoundException(Class _class, String keyType, String key) {
-        new DataNotFoundException(_class.getSimpleName(), keyType, key);
+        this(_class.getSimpleName(), keyType, key);
     }
 }
