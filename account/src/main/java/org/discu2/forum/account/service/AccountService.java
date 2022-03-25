@@ -6,10 +6,13 @@ import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.discu2.forum.account.model.Account;
+import org.discu2.forum.account.model.ProfilePic;
 import org.discu2.forum.account.repository.AccountRepository;
+import org.discu2.forum.account.repository.ProfilePicRepository;
 import org.discu2.forum.api.exception.AlreadyExistException;
 import org.discu2.forum.api.exception.BadPacketFormatException;
 import org.discu2.forum.api.exception.DataNotFoundException;
+import org.discu2.forum.api.exception.IllegalFileException;
 import org.discu2.forum.api.packet.AccountUpdateRequestPacket;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +20,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Part;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -29,6 +34,7 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final ProfilePicRepository profilePicRepository;
 
     private static final Set<String> BLACK_LIST_USERNAMES = Sets.newHashSet("login", "refresh_token", "register");
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Z0-9._].{4,16}$", Pattern.CASE_INSENSITIVE);
@@ -112,19 +118,22 @@ public class AccountService implements UserDetailsService {
         accountRepository.save(account);
     }
 
-//    public String addProfilePicture(@NonNull String username, @NonNull Part part) throws IOException {
-//
-//        fileService.deleteFile(Query.query(Criteria.where("filename").is(username + "_profile")));
-//
-//        return fileService.saveFileForUser(part.getInputStream(), username, username + "_profile", "image","profile_pic", 2000000);
-//    }
-//
-//    public void loadProfilePicture(@NonNull String username, @NonNull HttpServletResponse response) throws IOException {
-//
-//        var file = fileService.loadFile(Query.query(Criteria.where("filename").is(username + "_profile")));
-//
-//        fileService.writeGridFSFileToHttpServletResponse(file, response);
-//    }
+    public ProfilePic addProfilePicture(@NonNull String username, @NonNull Part part) throws IOException {
+
+        loadUserByUsername(username);
+        if (part.getSize() >= 10_000_000) throw new IllegalFileException("Profile pic shouldn't larger than 10MB");
+
+        var profilePic = new ProfilePic(username, part.getContentType(), part.getInputStream().readAllBytes());
+
+        return profilePicRepository.save(profilePic);
+    }
+
+    public ProfilePic loadProfilePictureByUsername(@NonNull String username) throws DataNotFoundException {
+
+        return profilePicRepository.findByUsername(username)
+                .orElseThrow(() -> new DataNotFoundException(ProfilePic.class, "username", username));
+
+    }
 
     private Optional<Account> getAccountByMail(@NonNull String mail) {
         return accountRepository.findAccountByMail(mail);

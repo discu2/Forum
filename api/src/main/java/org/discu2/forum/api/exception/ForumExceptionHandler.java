@@ -13,39 +13,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@ControllerAdvice
+import java.io.IOException;
+
+@ControllerAdvice(basePackages = { "org.discu2.forum" })
 public class ForumExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(AlreadyExistException.class)
-    public ResponseEntity<?> handleAccountAlreadyExist(AlreadyExistException e, WebRequest request) {
-        var packet = new ErrorMessagePacket(HttpStatus.BAD_REQUEST, e.getMessage());
-
-        return new ResponseEntity<>(packet, new HttpHeaders(), packet.getStatus());
-    }
-
-    @ExceptionHandler(BadPacketFormatException.class)
-    public ResponseEntity<?> handleBadPacketFormatException(BadPacketFormatException e, WebRequest request) {
-        var packet = new ErrorMessagePacket(HttpStatus.BAD_REQUEST, e.getMessage());
-
-        return new ResponseEntity<>(packet, new HttpHeaders(), packet.getStatus());
-    }
-
-    @ExceptionHandler(JWTDecodeException.class)
-    public ResponseEntity<?> handleJWTDecodeException(JWTDecodeException e, WebRequest request) {
-        var packet = new ErrorMessagePacket(HttpStatus.BAD_REQUEST, e.getMessage());
-
-        return new ResponseEntity<>(packet, new HttpHeaders(), packet.getStatus());
-    }
-
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<?> handleTokenExpiredException(TokenExpiredException e, WebRequest request) {
-        var packet = new ErrorMessagePacket(HttpStatus.BAD_REQUEST, e.getMessage());
-
-        return new ResponseEntity<>(packet, new HttpHeaders(), packet.getStatus());
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<?> handleAuthenticationException(AuthenticationException e, WebRequest request) {
+    @ExceptionHandler({
+            AlreadyExistException.class,
+            BadPacketFormatException.class,
+            JWTDecodeException.class,
+            TokenExpiredException.class,
+            AuthenticationException.class,
+            IllegalFileException.class
+    })
+    public ResponseEntity<?> handleBadRequestException(IOException e, WebRequest request) {
         var packet = new ErrorMessagePacket(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return new ResponseEntity<>(packet, new HttpHeaders(), packet.getStatus());
@@ -54,6 +35,13 @@ public class ForumExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e, WebRequest request) {
         var packet = new ErrorMessagePacket(HttpStatus.FORBIDDEN, "Access denied");
+
+        return new ResponseEntity<>(packet, new HttpHeaders(), packet.getStatus());
+    }
+
+    @ExceptionHandler(DataNotFoundException.class)
+    public ResponseEntity<?> handleDataNotFoundException(DataNotFoundException e, WebRequest request) {
+        var packet = new ErrorMessagePacket(HttpStatus.NOT_FOUND, e.getMessage());
 
         return new ResponseEntity<>(packet, new HttpHeaders(), packet.getStatus());
     }
