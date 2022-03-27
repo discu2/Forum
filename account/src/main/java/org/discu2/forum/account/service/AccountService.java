@@ -20,8 +20,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import javax.servlet.http.Part;
-import java.io.IOException;
+import java.io.*;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -120,15 +124,14 @@ public class AccountService implements UserDetailsService {
 
     public ProfilePic addProfilePicture(@NonNull String username, @NonNull Part part) throws IOException {
 
-        var contentType = Optional.ofNullable(part.getContentType())
+        Optional.ofNullable(part.getContentType())
                 .filter(p -> p.startsWith("image/"))
-                .orElseThrow(() -> new BadPacketFormatException("Only allow image file"));
+                .orElseThrow(() -> new BadPacketFormatException("File type must be an image"));
 
         loadUserByUsername(username);
         if (part.getSize() >= 10_000_000) throw new IllegalFileException("Profile pic shouldn't larger than 10MB");
 
-        var profilePic = new ProfilePic(username, part.getContentType(), part.getInputStream().readAllBytes());
-
+        var profilePic = new ProfilePic(username, "image/jpeg", getCompressedImage(part.getInputStream()));
         return profilePicRepository.save(profilePic);
     }
 
@@ -160,6 +163,30 @@ public class AccountService implements UserDetailsService {
     private void validateMail(String string) throws BadPacketFormatException {
         if (!MAIL_PATTERN.matcher(string).find())
             throw new BadPacketFormatException("mail does not match " + MAIL_PATTERN.pattern());
+    }
+
+    /**
+     * <a href="https://stackoverflow.com/a/37726626/18152420">Credit to...</a>
+     */
+    private byte[] getCompressedImage(InputStream inputStream) throws IOException {
+
+        var image = ImageIO.read(inputStream);
+        var compressed = new ByteArrayOutputStream();
+
+        try (var outputStream = new MemoryCacheImageOutputStream(compressed)) {
+
+            var jpgWriter = ImageIO.getImageWritersByFormatName("JPEG").next();
+
+            var jpgWriteParam = jpgWriter.getDefaultWriteParam();
+            jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            jpgWriteParam.setCompressionQuality(0.7f);
+
+            jpgWriter.setOutput(outputStream);
+            jpgWriter.write(null, new IIOImage(image, null, null), jpgWriteParam);
+            jpgWriter.dispose();
+        }
+
+        return compressed.toByteArray();
     }
 
 }
