@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 
 @RestController
@@ -66,7 +67,9 @@ public class AccountController {
     public void uploadProfilePicture(@PathVariable String username, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-        accountService.addProfilePicture(username, request.getPart("Image"));
+        accountService.addProfilePicture(username,
+                Optional.ofNullable(request.getPart("Image"))
+                        .orElseThrow(() -> new BadPacketFormatException("Missing \"Image\" key in body")));
     }
 
     @GetMapping(value = "/{username}/profile_pic")

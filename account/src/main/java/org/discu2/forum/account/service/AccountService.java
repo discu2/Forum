@@ -120,6 +120,10 @@ public class AccountService implements UserDetailsService {
 
     public ProfilePic addProfilePicture(@NonNull String username, @NonNull Part part) throws IOException {
 
+        var contentType = Optional.ofNullable(part.getContentType())
+                .filter(p -> p.startsWith("image/"))
+                .orElseThrow(() -> new BadPacketFormatException("Only allow image file"));
+
         loadUserByUsername(username);
         if (part.getSize() >= 10_000_000) throw new IllegalFileException("Profile pic shouldn't larger than 10MB");
 
@@ -141,10 +145,6 @@ public class AccountService implements UserDetailsService {
 
     private Optional<Account> getAccountByName(@NonNull String name) {
         return accountRepository.findAccountByUsername(name);
-    }
-
-    private Optional<Account> getAccountById(@NonNull String id) {
-        return accountRepository.findById(id);
     }
 
     private void validateUsername(String string) throws BadPacketFormatException {
