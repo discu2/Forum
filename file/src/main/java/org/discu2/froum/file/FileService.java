@@ -1,4 +1,4 @@
-package org.discu2.forum.core.service;
+package org.discu2.froum.file;
 
 import com.google.common.base.Strings;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -80,6 +80,5 @@ public class FileService {
         private String type;
         private String username;
         private String boardId;
-
     }
 }

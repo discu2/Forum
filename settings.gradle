@@ -3,4 +3,5 @@ rootProject.name = 'Forum'
 include 'core'
 include 'account'
 include 'api'
+include 'file'
 
