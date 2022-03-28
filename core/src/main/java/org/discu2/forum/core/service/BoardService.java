@@ -2,15 +2,15 @@ package org.discu2.forum.core.service;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.discu2.forum.api.model.Board;
-import org.discu2.forum.api.exception.AlreadyExistException;
-import org.discu2.forum.api.exception.DataNotFoundException;
+import org.discu2.forum.common.model.Board;
+import org.discu2.forum.common.exception.AlreadyExistException;
+import org.discu2.forum.common.exception.DataNotFoundException;
 import org.discu2.forum.core.repository.BoardRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static org.discu2.forum.api.model.Board.*;
+import static org.discu2.forum.common.model.Board.*;
 
 @Service
 @AllArgsConstructor

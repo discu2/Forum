@@ -1,10 +1,10 @@
 package org.discu2.forum.core.controller;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.api.exception.BadPacketFormatException;
-import org.discu2.forum.api.packet.TextBlockRequestPacket;
+import org.discu2.forum.common.exception.BadPacketFormatException;
+import org.discu2.forum.common.packet.TextBlockRequestPacket;
 import org.discu2.forum.core.service.CommentService;
-import org.discu2.forum.api.util.JsonConverter;
+import org.discu2.forum.common.util.JsonConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;

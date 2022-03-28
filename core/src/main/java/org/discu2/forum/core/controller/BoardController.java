@@ -1,12 +1,12 @@
 package org.discu2.forum.core.controller;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.api.model.Board;
-import org.discu2.forum.api.exception.BadPacketFormatException;
-import org.discu2.forum.api.exception.DataNotFoundException;
-import org.discu2.forum.api.packet.CreateBoardRequestPacket;
+import org.discu2.forum.common.model.Board;
+import org.discu2.forum.common.exception.BadPacketFormatException;
+import org.discu2.forum.common.exception.DataNotFoundException;
+import org.discu2.forum.common.packet.CreateBoardRequestPacket;
 import org.discu2.forum.core.service.BoardService;
-import org.discu2.forum.api.util.JsonConverter;
+import org.discu2.forum.common.util.JsonConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

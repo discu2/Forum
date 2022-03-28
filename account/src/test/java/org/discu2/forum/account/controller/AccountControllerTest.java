@@ -2,7 +2,7 @@ package org.discu2.forum.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.discu2.forum.api.packet.RegisterRequestPacket;
+import org.discu2.forum.common.packet.RegisterRequestPacket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import org.discu2.forum.account.config.TokenConfig;
 import org.discu2.forum.account.model.Account;
 import org.discu2.forum.account.service.AccountService;
-import org.discu2.forum.api.util.AbstractSpringContext;
+import org.discu2.forum.common.util.AbstractSpringContext;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;

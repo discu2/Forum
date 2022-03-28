@@ -2,14 +2,12 @@ package org.discu2.forum.account.setup;
 
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
-import org.discu2.forum.account.repository.AccountRepository;
 import org.discu2.forum.account.repository.RoleRepository;
 import org.discu2.forum.account.service.AccountService;
-import org.discu2.forum.account.service.RoleService;
-import org.discu2.forum.api.exception.AlreadyExistException;
-import org.discu2.forum.api.exception.BadPacketFormatException;
-import org.discu2.forum.api.exception.DataNotFoundException;
-import org.discu2.forum.api.model.Role;
+import org.discu2.forum.common.exception.AlreadyExistException;
+import org.discu2.forum.common.exception.BadPacketFormatException;
+import org.discu2.forum.common.exception.DataNotFoundException;
+import org.discu2.forum.common.model.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 

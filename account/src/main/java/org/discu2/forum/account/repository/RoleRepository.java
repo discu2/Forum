@@ -1,6 +1,6 @@
 package org.discu2.forum.account.repository;
 
-import org.discu2.forum.api.model.Role;
+import org.discu2.forum.common.model.Role;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

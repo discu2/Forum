@@ -2,7 +2,7 @@ package org.discu2.forum.account.config;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.account.filter.ForumUsernamePasswordAuthenticationFilter;
-import org.discu2.forum.api.filter.TokenAuthFilter;
+import org.discu2.forum.common.filter.TokenAuthFilter;
 import org.discu2.forum.account.service.AccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

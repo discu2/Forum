@@ -1,9 +1,9 @@
 package org.discu2.forum.core.service;
 
 import lombok.NonNull;
-import org.discu2.forum.api.model.TextBlock;
-import org.discu2.forum.api.model.Topic;
-import org.discu2.forum.api.exception.DataNotFoundException;
+import org.discu2.forum.common.model.TextBlock;
+import org.discu2.forum.common.model.Topic;
+import org.discu2.forum.common.exception.DataNotFoundException;
 import org.discu2.forum.core.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

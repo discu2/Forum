@@ -1,15 +1,13 @@
 package org.discu2.forum.account.controller;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.discu2.forum.account.model.Account;
 import org.discu2.forum.account.service.AccountService;
-import org.discu2.forum.api.exception.BadPacketFormatException;
-import org.discu2.forum.api.exception.DataNotFoundException;
-import org.discu2.forum.api.packet.AccountPacket;
-import org.discu2.forum.api.packet.AccountUpdateRequestPacket;
-import org.discu2.forum.api.packet.RegisterRequestPacket;
-import org.discu2.forum.api.util.JsonConverter;
+import org.discu2.forum.common.exception.BadPacketFormatException;
+import org.discu2.forum.common.packet.AccountPacket;
+import org.discu2.forum.common.packet.AccountUpdateRequestPacket;
+import org.discu2.forum.common.packet.RegisterRequestPacket;
+import org.discu2.forum.common.util.JsonConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;

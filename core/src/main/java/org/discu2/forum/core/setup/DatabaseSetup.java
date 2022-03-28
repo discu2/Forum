@@ -1,8 +1,8 @@
 package org.discu2.forum.core.setup;
 
 import lombok.AllArgsConstructor;
-import org.discu2.forum.api.exception.AlreadyExistException;
-import org.discu2.forum.api.exception.DataNotFoundException;
+import org.discu2.forum.common.exception.AlreadyExistException;
+import org.discu2.forum.common.exception.DataNotFoundException;
 import org.discu2.forum.core.repository.BoardRepository;
 import org.discu2.forum.core.service.BoardService;
 import org.springframework.context.annotation.Bean;

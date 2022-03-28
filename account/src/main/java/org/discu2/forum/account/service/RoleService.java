@@ -3,9 +3,9 @@ package org.discu2.forum.account.service;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.discu2.forum.account.repository.RoleRepository;
-import org.discu2.forum.api.model.Role;
-import org.discu2.forum.api.exception.AlreadyExistException;
-import org.discu2.forum.api.exception.DataNotFoundException;
+import org.discu2.forum.common.model.Role;
+import org.discu2.forum.common.exception.AlreadyExistException;
+import org.discu2.forum.common.exception.DataNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

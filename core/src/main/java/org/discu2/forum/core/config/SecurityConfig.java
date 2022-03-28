@@ -2,7 +2,7 @@ package org.discu2.forum.core.config;
 
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.Data;
-import org.discu2.forum.api.filter.TokenAuthFilter;
+import org.discu2.forum.common.filter.TokenAuthFilter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
