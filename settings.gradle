@@ -1,1 +1,9 @@
 rootProject.name = 'Forum'
+
+include 'core'
+include 'account'
+include 'common'
+include 'file'
+include 'discovery'
+include 'gateway'
+
