@@ -7,10 +7,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan("org.discu2.forum")
 @SpringBootApplication(exclude= {UserDetailsServiceAutoConfiguration.class})
-public class Core {
+public class CoreApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Core.class, args);
+        SpringApplication.run(CoreApplication.class, args);
     }
 
 }
