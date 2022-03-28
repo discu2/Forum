@@ -1,4 +1,4 @@
-package org.discu2.froum.file;
+package org.discu2.forum.file;
 
 import com.google.common.base.Strings;
 import com.mongodb.client.gridfs.model.GridFSFile;

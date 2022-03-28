@@ -1,4 +1,4 @@
-package org.discu2.froum.file;
+package org.discu2.forum.file;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package org.discu2.froum.file;
+package org.discu2.forum.file;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
