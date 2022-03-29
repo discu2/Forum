@@ -22,7 +22,6 @@ import java.io.IOException;
 public class BoardController {
 
     private final BoardService boardService;
-    //private final RoleService roleService;
 
     @PreAuthorize("permitAll()")
     @GetMapping
@@ -31,11 +30,10 @@ public class BoardController {
         var roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         var boards = boardService.loadAllBoards();
 
-        if (!roles.contains(new SimpleGrantedAuthority("ADMIN")))
+        if (!roles.contains(new SimpleGrantedAuthority("ROLE_ADMIN")))
 
             boards.removeIf(b -> !b.getPermissions().get(Board.PERMISSION_ACCESS).stream().anyMatch(roleId -> {
                 try {
-                    //var roleName = roleService.loadRoleById(roleId).getName();
                     return roles.contains(new SimpleGrantedAuthority("ROLE_" + roleId));
                 } catch (Exception e) {
                     return false;
@@ -46,7 +44,7 @@ public class BoardController {
 
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = "application/json")
     public void createBoard(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -64,7 +62,7 @@ public class BoardController {
 
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{groupName}/{name}")
     public void deleteBoard(@PathVariable String groupName, @PathVariable String name,
             HttpServletRequest request, HttpServletResponse response) throws DataNotFoundException {
