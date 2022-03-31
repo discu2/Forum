@@ -14,6 +14,7 @@ import org.discu2.forum.common.exception.BadPacketFormatException;
 import org.discu2.forum.common.exception.DataNotFoundException;
 import org.discu2.forum.common.exception.IllegalFileException;
 import org.discu2.forum.common.packet.AccountUpdateRequestPacket;
+import org.imgscalr.Scalr;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +26,10 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import javax.servlet.http.Part;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -122,7 +126,7 @@ public class AccountService implements UserDetailsService {
         accountRepository.save(account);
     }
 
-    public ProfilePic addProfilePicture(@NonNull String username, @NonNull Part part) throws IOException {
+    public List<ProfilePic> addProfilePicture(@NonNull String username, @NonNull Part part) throws IOException {
 
         Optional.ofNullable(part.getContentType())
                 .filter(p -> p.startsWith("image/"))
@@ -131,13 +135,16 @@ public class AccountService implements UserDetailsService {
         loadUserByUsername(username);
         if (part.getSize() >= 10_000_000) throw new IllegalFileException("Profile pic shouldn't larger than 10MB");
 
-        var profilePic = new ProfilePic(username, "image/jpeg", getCompressedImage(part.getInputStream()));
-        return profilePicRepository.save(profilePic);
+        var result = new ArrayList<ProfilePic>();
+        result.add(profilePicRepository.save(createProfilePics(username, part.getInputStream(), ProfilePic.ProfilePicSize.NORMAL)));
+        result.add(profilePicRepository.save(createProfilePics(username, part.getInputStream(), ProfilePic.ProfilePicSize.MEDIUM)));
+        result.add(profilePicRepository.save(createProfilePics(username, part.getInputStream(), ProfilePic.ProfilePicSize.SMALL)));
+
+        return result;
     }
 
-    public ProfilePic loadProfilePictureByUsername(@NonNull String username) throws DataNotFoundException {
-
-        return profilePicRepository.findByUsername(username)
+    public ProfilePic loadProfilePictureByUsername(@NonNull String username, ProfilePic.ProfilePicSize size) throws DataNotFoundException {
+        return profilePicRepository.findByFilename(username + "_" + (size == null ? ProfilePic.ProfilePicSize.NORMAL.name() : size.name()))
                 .orElseThrow(() -> new DataNotFoundException(ProfilePic.class, "username", username));
 
     }
@@ -165,12 +172,20 @@ public class AccountService implements UserDetailsService {
             throw new BadPacketFormatException("mail does not match " + MAIL_PATTERN.pattern());
     }
 
+    private ProfilePic createProfilePics(String username, InputStream inputStream, ProfilePic.ProfilePicSize targetSize) throws IOException {
+
+        var image = ImageIO.read(inputStream);
+
+        image = Scalr.resize(image, targetSize.getSize());
+
+        return new ProfilePic(username + "_" + targetSize.name(), "image/jpeg", createCompressedImage(image, ProfilePic.ProfilePicSize.NORMAL));
+    }
+
     /**
      * <a href="https://stackoverflow.com/a/37726626/18152420">Credit to...</a>
      */
-    private byte[] getCompressedImage(InputStream inputStream) throws IOException {
+    private byte[] createCompressedImage(BufferedImage image, ProfilePic.ProfilePicSize targetSize) throws IOException {
 
-        var image = ImageIO.read(inputStream);
         var compressed = new ByteArrayOutputStream();
 
         try (var outputStream = new MemoryCacheImageOutputStream(compressed)) {

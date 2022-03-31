@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ProfilePicRepository extends MongoRepository<ProfilePic, String> {
 
-    Optional<ProfilePic> findByUsername(String username);
+    Optional<ProfilePic> findByFilename(String filename);
 }

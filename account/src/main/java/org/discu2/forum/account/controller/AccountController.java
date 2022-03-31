@@ -2,6 +2,7 @@ package org.discu2.forum.account.controller;
 
 import lombok.AllArgsConstructor;
 import org.discu2.forum.account.model.Account;
+import org.discu2.forum.account.model.ProfilePic;
 import org.discu2.forum.account.service.AccountService;
 import org.discu2.forum.common.exception.BadPacketFormatException;
 import org.discu2.forum.common.packet.AccountPacket;
@@ -71,9 +72,16 @@ public class AccountController {
     }
 
     @GetMapping(value = "/{username}/profile_pic")
-    public void getProfilePicture(@PathVariable String username, HttpServletResponse response) throws IOException {
+    public void getProfilePicture(@PathVariable String username, @RequestParam(name = "size",defaultValue = "0") int sizeId,
+                                  HttpServletResponse response) throws IOException {
 
-        var pic = accountService.loadProfilePictureByUsername(username);
+        ProfilePic.ProfilePicSize size = null;
+
+        for (var s : ProfilePic.ProfilePicSize.values())
+            if (s.getId() == sizeId) size = s;
+
+
+        var pic = accountService.loadProfilePictureByUsername(username, size);
 
         response.setContentType(pic.getContentType());
         response.getOutputStream().write(pic.getPicture());
