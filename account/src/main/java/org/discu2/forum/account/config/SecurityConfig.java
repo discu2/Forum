@@ -34,13 +34,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         jwtAuthFilter.setFilterProcessesUrl("/account/login");
 
         http.csrf().disable();
-                //.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilter(jwtAuthFilter);
-        http.addFilterBefore(new TokenAuthFilter(tokenConfig.getAlgorithm(),"/account/refresh_token", "/account/login", "/account/register"), ForumUsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new TokenAuthFilter(tokenConfig.getAlgorithm(),"/oauth/refresh_token", "/account/login", "/account/register"), ForumUsernamePasswordAuthenticationFilter.class);
 
     }
 

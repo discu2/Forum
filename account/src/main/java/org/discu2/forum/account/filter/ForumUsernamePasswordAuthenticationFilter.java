@@ -1,11 +1,11 @@
 package org.discu2.forum.account.filter;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.discu2.forum.account.model.Account;
-import org.discu2.forum.account.util.TokenFactory;
+import org.discu2.forum.account.service.TokenService;
+import org.discu2.forum.account.util.SpringContext;
 import org.discu2.forum.common.packet.ErrorMessagePacket;
 import org.discu2.forum.common.packet.LoginRequestPacket;
-import org.discu2.forum.common.packet.TokenPacket;
 import org.discu2.forum.common.util.JsonConverter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,10 +23,11 @@ import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService = SpringContext.getBean(TokenService.class);
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -61,10 +62,7 @@ public class ForumUsernamePasswordAuthenticationFilter extends UsernamePasswordA
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
         var account = (Account)authResult.getPrincipal();
-        var accessToken = TokenFactory.createAccessToken(account, request);
-        var refreshToken = TokenFactory.createRefreshToken(account, request);
-
-        var packet = new TokenPacket(accessToken, refreshToken);
+        var packet = tokenService.createTokenDto(account, request);
 
         JsonConverter.PacketToJsonResponse(response, packet);
     }

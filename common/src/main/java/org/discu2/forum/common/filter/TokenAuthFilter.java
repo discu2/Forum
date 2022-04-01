@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -29,7 +31,7 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
     public TokenAuthFilter(Algorithm algorithm, String... whitelist) {
         if (whitelist.length > 0)
-            whiteListPaths = Sets.newHashSet(whitelist);
+            whiteListPaths = new HashSet<>(Arrays.stream(whitelist).toList());
 
         this.algorithm = algorithm;
     }

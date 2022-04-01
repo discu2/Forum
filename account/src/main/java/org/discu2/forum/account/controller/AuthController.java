@@ -7,8 +7,7 @@ import lombok.AllArgsConstructor;
 import org.discu2.forum.account.config.TokenConfig;
 import org.discu2.forum.account.model.Account;
 import org.discu2.forum.account.service.AccountService;
-import org.discu2.forum.account.util.TokenFactory;
-import org.discu2.forum.common.packet.TokenPacket;
+import org.discu2.forum.account.service.TokenService;
 import org.discu2.forum.common.util.JsonConverter;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +26,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class AuthController {
 
     private final AccountService accountService;
+    private final TokenService tokenService;
     private final TokenConfig tokenConfig;
 
     @GetMapping("/refresh_token")
@@ -52,8 +52,7 @@ public class AuthController {
             return;
         }
 
-        var accessToken = TokenFactory.createAccessToken((Account) account, request);
-        var packet = new TokenPacket(accessToken, refreshToken);
+        var packet = tokenService.createTokenDto((Account) account, request, refreshToken);
 
         JsonConverter.PacketToJsonResponse(response, packet);
 
