@@ -8,5 +8,7 @@ import lombok.Data;
 public class TokenPacket{
 
     private String accessToken;
+    private Integer expireIn;
+    private Long expireDateTime;
     private String refreshToken;
 }
