@@ -28,7 +28,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping(value = "/register")
-    public void registerAccount(HttpServletRequest request) throws IOException {
+    public void registerAccount(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         var packet = JsonConverter.requestToPacket(request.getInputStream(), RegisterRequestPacket.class);
 
