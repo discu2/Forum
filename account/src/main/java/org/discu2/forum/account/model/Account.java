@@ -6,6 +6,7 @@ import lombok.Data;
 import org.discu2.forum.account.repository.AccountRepository;
 import org.discu2.forum.account.repository.RoleRepository;
 import org.discu2.forum.account.util.SpringContext;
+import org.discu2.forum.common.model.Avatar;
 import org.discu2.forum.common.model.IAccount;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,10 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Data
@@ -46,6 +44,7 @@ public class Account implements IAccount {
     private List<String> refreshTokenUUIDs;
 
     private String nickname;
+    private EnumMap<Avatar.Size, String> avatarIds;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

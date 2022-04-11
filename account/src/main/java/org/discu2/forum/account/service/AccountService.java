@@ -6,9 +6,9 @@ import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.discu2.forum.account.model.Account;
-import org.discu2.forum.account.model.ProfilePic;
+import org.discu2.forum.common.model.Avatar;
 import org.discu2.forum.account.repository.AccountRepository;
-import org.discu2.forum.account.repository.ProfilePicRepository;
+import org.discu2.forum.account.repository.AvatarRepository;
 import org.discu2.forum.common.exception.AlreadyExistException;
 import org.discu2.forum.common.exception.BadPacketFormatException;
 import org.discu2.forum.common.exception.DataNotFoundException;
@@ -28,10 +28,7 @@ import javax.imageio.stream.MemoryCacheImageOutputStream;
 import javax.servlet.http.Part;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 
@@ -42,7 +39,7 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
-    private final ProfilePicRepository profilePicRepository;
+    private final AvatarRepository avatarRepository;
 
     private static final Set<String> BLACK_LIST_USERNAMES = Sets.newHashSet("login", "refresh_token", "register");
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Z0-9._].{4,16}$", Pattern.CASE_INSENSITIVE);
@@ -74,7 +71,8 @@ public class AccountService implements UserDetailsService {
                 mail,
                 false,
                 Lists.newArrayList(),
-                Strings.isNullOrEmpty(nickname) ? username : nickname
+                Strings.isNullOrEmpty(nickname) ? username : nickname,
+                new EnumMap<>(Avatar.Size.class)
         );
 
         try {
@@ -126,26 +124,33 @@ public class AccountService implements UserDetailsService {
         accountRepository.save(account);
     }
 
-    public List<ProfilePic> addProfilePicture(@NonNull String username, @NonNull Part part) throws IOException {
+    public void addAvatar(@NonNull String username, @NonNull Part part) throws IOException {
 
         Optional.ofNullable(part.getContentType())
                 .filter(p -> p.startsWith("image/"))
-                .orElseThrow(() -> new BadPacketFormatException("File type must be an image"));
+                .orElseThrow(() -> new BadPacketFormatException("File type must be image"));
 
-        loadUserByUsername(username);
+        var account = (Account)loadUserByUsername(username);
         if (part.getSize() >= 10_000_000) throw new IllegalFileException("Profile pic shouldn't larger than 10MB");
 
-        var result = new ArrayList<ProfilePic>();
-        result.add(profilePicRepository.save(createProfilePics(username, part.getInputStream(), ProfilePic.ProfilePicSize.NORMAL)));
-        result.add(profilePicRepository.save(createProfilePics(username, part.getInputStream(), ProfilePic.ProfilePicSize.MEDIUM)));
-        result.add(profilePicRepository.save(createProfilePics(username, part.getInputStream(), ProfilePic.ProfilePicSize.SMALL)));
+        var result = new EnumMap<Avatar.Size, String>(Avatar.Size.class);
+        result.put(Avatar.Size.NORMAL, avatarRepository.save(createAvatars(username, part.getInputStream(), Avatar.Size.NORMAL)).getUuid());
+        result.put(Avatar.Size.MEDIUM, avatarRepository.save(createAvatars(username, part.getInputStream(), Avatar.Size.MEDIUM)).getUuid());
+        result.put(Avatar.Size.SMALL, avatarRepository.save(createAvatars(username, part.getInputStream(), Avatar.Size.SMALL)).getUuid());
 
-        return result;
+        account.setAvatarIds(result);
+        accountRepository.save(account);
     }
 
-    public ProfilePic loadProfilePictureByUsername(@NonNull String username, ProfilePic.ProfilePicSize size) throws DataNotFoundException {
-        return profilePicRepository.findByFilename(username + "_" + (size == null ? ProfilePic.ProfilePicSize.NORMAL.name() : size.name()))
-                .orElseThrow(() -> new DataNotFoundException(ProfilePic.class, "username", username));
+    public Avatar loadAvatarByUsername(@NonNull String username, Avatar.Size size) throws DataNotFoundException {
+        return avatarRepository.findByFilename(username + "_" + (size == null ? Avatar.Size.NORMAL.name() : size.name()))
+                .orElseThrow(() -> new DataNotFoundException(Avatar.class, "username", username));
+
+    }
+
+    public Avatar loadAvatarById(@NonNull String id) throws DataNotFoundException {
+        return avatarRepository.findByUuid(id)
+                .orElseThrow(() -> new DataNotFoundException(Avatar.class, "id", id));
 
     }
 
@@ -172,19 +177,19 @@ public class AccountService implements UserDetailsService {
             throw new BadPacketFormatException("mail does not match " + MAIL_PATTERN.pattern());
     }
 
-    private ProfilePic createProfilePics(String username, InputStream inputStream, ProfilePic.ProfilePicSize targetSize) throws IOException {
+    private Avatar createAvatars(String username, InputStream inputStream, Avatar.Size targetSize) throws IOException {
 
         var image = ImageIO.read(inputStream);
 
         image = Scalr.resize(image, targetSize.getSize());
 
-        return new ProfilePic(username + "_" + targetSize.name(), "image/jpeg", createCompressedImage(image, ProfilePic.ProfilePicSize.NORMAL));
+        return new Avatar(username + "_" + targetSize.name(), "image/jpeg", UUID.randomUUID().toString(), createCompressedImage(image, Avatar.Size.NORMAL));
     }
 
     /**
      * <a href="https://stackoverflow.com/a/37726626/18152420">Credit to...</a>
      */
-    private byte[] createCompressedImage(BufferedImage image, ProfilePic.ProfilePicSize targetSize) throws IOException {
+    private byte[] createCompressedImage(BufferedImage image, Avatar.Size targetSize) throws IOException {
 
         var compressed = new ByteArrayOutputStream();
 

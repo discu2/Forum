@@ -23,6 +23,9 @@ public class GatewayApplication {
                         .path("/account/**")
                         .uri("lb://forum-account/account/**"))
                 .route(r -> r
+                        .path("/avatar/**")
+                        .uri("lb://forum-account/avatar/**"))
+                .route(r -> r
                         .path("/oauth/**")
                         .uri("lb://forum-account/oauth/**"))
                 .route(r -> r
