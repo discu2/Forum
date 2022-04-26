@@ -16,3 +16,4 @@ Basic? modular discussion forum backend application built with Spring Boot and M
 - **Discovery** - A service discovery service based on Eureka
 - **Gateway** - A gateway service based on spring-cloud-gateway
     
+### [Postman documentation](https://documenter.getpostman.com/view/19711136/Uyr5pza1)
